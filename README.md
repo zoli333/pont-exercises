@@ -1,6 +1,9 @@
 
 # Vue.js feladatok
 
+töltsd le vagy forkold a repository-t és készítsd el az alábbi menő appokat Vue.js segítségével! :)
+A három feladatot a három "üres" mappába el is tudod helyezni.
+
 ## 0. sort it!
   - Harry Potter sorting hat (teszlek süveg) - házválasztó app
   - api hívás gombnyomásra: https://www.potterapi.com/v1/sortingHat ([docs](https://www.potterapi.com/))
