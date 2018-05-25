@@ -4,7 +4,7 @@
 Töltsd le vagy forkold a repository-t és készítsd el az alábbi menő appokat Vue.js segítségével! :)
 A három feladatot a három "üres" mappába el is tudod helyezni.
 
-Az oldalt [itt](http://practice.floppylab.com/pont/) is meg tudod nézni.
+A feladatok leírását [itt](http://practice.floppylab.com/pont/) is meg tudod nézni.
 
 ## 0. sort it!
   - Harry Potter sorting hat (teszlek süveg) - házválasztó app
