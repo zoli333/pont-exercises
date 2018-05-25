@@ -1,7 +1,7 @@
 
 # Vue.js feladatok
 
-töltsd le vagy forkold a repository-t és készítsd el az alábbi menő appokat Vue.js segítségével! :)
+Töltsd le vagy forkold a repository-t és készítsd el az alábbi menő appokat Vue.js segítségével! :)
 A három feladatot a három "üres" mappába el is tudod helyezni.
 
 ## 0. sort it!
