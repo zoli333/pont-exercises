@@ -6,32 +6,20 @@
 		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 		<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="./css/style.css">
 		
-		<style>
-			.container {
-				margin-top:20px;
-			}
-			#hatImage {
-				margin-top: 20px;
-				width: 300px;
-				height: 300px;
-			}
-			.hatField {
-				margin-top: 20px;
-				
-			}
-		</style>
 		
 	</head>
 	<body>
-		<main class="container">
+		<main id="container" class="container">
 			<div class="row">
 				<button class="btn btn-primary center-block" v-on:click="generateHat">Generate Hat</button>	
 			</div>
 			<div class="row">
-				<img class="center-block" id="hatImage">
+				<img class="center-block" id="hat-image">
 			</div>
-			<div class="hatField row center-block text-center">
+			<div id = "hat-field" class="row center-block text-center">
 				<p><h1>{{hatType}}</h1></p>
 			</div>
 		</main>
@@ -52,16 +40,21 @@
 					axios.get("https://www.potterapi.com/v1/sortingHat")
 						.then(function(response) {
 							self.hatType=response.data;
-							if(self.hatType=='Hufflepuff') {
-								image = "0.51_Hufflepuff_Crest_Transparent.png";
-    						} else if(self.hatType=='Slytherin') {
-								image = "0.61_Slytherin_Crest_Transparent.png";
-							} else if(self.hatType=='Ravenclaw') {
-								image = "0.41_Ravenclaw_Crest_Transparent.png";
-							} else {
-								image = "0.31_Gryffindor_Crest_Transparent.png";
+							switch(self.hatType) {
+								case 'Hufflepuff':
+									image = "0.51_Hufflepuff_Crest_Transparent.png";
+									break;
+								case 'Slytherin':
+									image = "0.61_Slytherin_Crest_Transparent.png";
+									break;
+								case 'Ravenclaw':
+									image = "0.41_Ravenclaw_Crest_Transparent.png";
+									break;
+								default:
+									image = "0.31_Gryffindor_Crest_Transparent.png";
+								
 							}
-							document.getElementById("hatImage").src="./imgs/" + image;
+							$("#hat-image").attr({'src':"./imgs/" + image});
 						});
 					
 			  }
