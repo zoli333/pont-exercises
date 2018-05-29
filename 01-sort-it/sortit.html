@@ -40,6 +40,7 @@
 					axios.get("https://www.potterapi.com/v1/sortingHat")
 						.then(function(response) {
 							self.hatType=response.data;
+<<<<<<< HEAD
 							switch(self.hatType) {
 								case 'Hufflepuff':
 									image = "0.51_Hufflepuff_Crest_Transparent.png";
@@ -53,6 +54,16 @@
 								default:
 									image = "0.31_Gryffindor_Crest_Transparent.png";
 								
+=======
+							if(self.hatType=='Hufflepuff') {
+								image = "0.51_Hufflepuff_Crest_Transparent.png";
+    						        } else if(self.hatType=='Slytherin') {
+								image = "0.61_Slytherin_Crest_Transparent.png";
+							} else if(self.hatType=='Ravenclaw') {
+								image = "0.41_Ravenclaw_Crest_Transparent.png";
+							} else {
+								image = "0.31_Gryffindor_Crest_Transparent.png";
+>>>>>>> da4124439f1bf387f059becde2312a9fc218d181
 							}
 							$("#hat-image").attr({'src':"./imgs/" + image});
 						});
