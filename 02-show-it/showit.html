@@ -1,0 +1,147 @@
+
+<html>
+	<head>
+		
+		<meta charset="UTF-8">
+		<title>Sort It!</title>
+		<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js"></script>
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
+		<link rel="stylesheet" type="text/css" href="./css/style.css">
+	</head>
+	<body>
+		<main id="container" class="container">
+			<div class="row center-block form-group constellation-selection">
+				<select class="form-control" v-model="selected" v-on:change="getAbbrevationContent()">
+				  <option selected disabled value="">Please choose one from the following constellations</option>
+				  <option v-for="abbrev in abbreviationData" >{{abbrev.name}}</option>
+				</select>
+				
+				<p v-if="selected==''" class="center-block selection-class">You haven't selected any constellations yet</p>
+				<p v-else="" class="center-block selection-class">You have selected: {{ selected }}</p>
+				
+			</div>
+			
+			<div class="row" id="constellation-content">
+				<canvas id="constellation-canvas" class="center-block" >
+				</canvas>
+			</div>
+			
+		</main>
+	</body>
+	<script>
+		var app = new Vue({
+		  el: '#container',
+		  data: {
+			abbreviationData: [],
+			selected: '',
+			abbreviationName: '',
+		  },
+		  methods: {
+			loadAbbreviationData: function() {
+				let self = this;
+				axios.get('http://practice.floppylab.com/pont/data/constellations.json')
+					.then(function(response){
+						self.abbreviationData = response.data;
+					});
+					
+			},
+			getAbbrevationContent: function() {
+				
+				var self = this;
+				
+				for(var i=0;i<self.abbreviationData.length;i++) {
+					if(self.abbreviationData[i].name == self.selected){
+						self.abbreviationName = self.abbreviationData[i].abbreviation;
+					}
+				}
+				let url="http://www.astropical.space/astrodb/api.php?table=stars&which=constellation&limit=" + self.abbreviationName.toLowerCase() + "&format=json";
+				axios.get(url)
+					.then(function(response){
+						var tempData = response.data; //temporary variable (array) to store the selected constellations' all data
+						constellationCoordinates = [];
+						constellationDescription = [];
+						for(var i = 0; i < tempData.hipstars.length; i++) {
+							var ra = tempData.hipstars[i].ra;
+							var dec = tempData.hipstars[i].de;
+							var name = tempData.hipstars[i].name;
+							var desig = tempData.hipstars[i].desig;
+							constellationCoordinates.push({x: ra, y: dec});
+							constellationDescription.push(name + desig);
+						}
+						
+						var chartData = {
+							labels: constellationDescription,
+							datasets: [{
+								label: "Constellations plot",
+								data: this.constellationCoordinates, // data
+								borderColor: "rgba(220,220,220,1)",
+								backgroundColor: "rgba(220,220,220,0.2)",
+								pointBorderColor: "rgba(220,220,220,1)",
+								pointBackgroundColor: "rgb(255,0,0)",
+								pointBorderWidth: "1"
+							}] // datasets
+						} //chartData
+						
+						self.drawConstellation(chartData);
+					});
+				
+				
+				
+			},
+			drawConstellation: function(chartData) {
+				
+				//clear the element of the animation, uncless the picture will be infinitely zoomed in
+				var pieChartContent = document.getElementById('constellation-content');
+				pieChartContent.innerHTML = '&nbsp;';
+				$('#constellation-content').append('<canvas class="center-block" id="constellation-canvas" width="900" height="520"><canvas>');
+
+				//clear the canvas also
+				var canvas = document.getElementById('constellation-canvas');
+				var ctx = canvas.getContext('2d');
+				// Store the current transformation matrix
+				ctx.save();
+				// Use the identity matrix while clearing the canvas
+				ctx.setTransform(1, 0, 0, 1, 0, 0);
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+				// Restore the transform
+				ctx.restore();
+				
+				var chartAnim = new Chart.Scatter(ctx,{
+					data: chartData,
+					options: {
+						tooltips: {
+							callbacks: {
+								label: function(tooltipItem, data) {
+									var label = data.labels[tooltipItem.index];
+									return label + ': (' + tooltipItem.xLabel + ', ' + tooltipItem.yLabel + ')';
+								}
+							}
+						},
+						responsive: false,
+						hoverMode: 'single',
+						scales: {
+							xAxes: [{
+								gridLines: {
+									zeroLineColor: "rgba(0,0,0,1)"
+								}
+							}]
+						}
+					}
+				}); // new Chart
+				
+			}
+			
+			
+		  },
+		  //This method only initializes the data and methods
+		  created: function() {
+			this.loadAbbreviationData();
+		  }
+		  
+		});
+	</script>
+	
+</html>

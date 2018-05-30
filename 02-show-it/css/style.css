@@ -1,0 +1,16 @@
+#container {
+	margin-top: 20px;
+}
+#constellation-selection {
+	margin-top: 20px;
+}
+
+#constellation-canvas {
+	/*border: 1px solid black;*/
+	width: 900px;
+	height: 520px;
+}
+
+.selection-class {
+	margin-top: 20px;
+}
