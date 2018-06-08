@@ -1,0 +1,143 @@
+<html>
+<head>
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.js"></script>
+	<link rel="stylesheet" type="text/css" href="./resources/css/register.css">
+	<title>TeleCar</title>
+</head>
+<body>
+
+<div id="app" class="container" style="display: none;">
+	<form class="form-registration" v-on:submit.prevent>
+	
+        <h3 class="form-registration-heading text-center">Registration</h3>
+        <hr class="borderdiv">
+    
+		        
+        <input v-model="username" type="text" id="username" name="username" class="form-control" placeholder="User name">
+    
+        
+        <input v-model="password" type="password" id="password" name="password" class="form-control" placeholder="Password">
+    	
+    	
+        <input v-model="firstname" type="text" id="firstname" name="firstname" class="form-control" placeholder="First Name">
+    	
+    	
+    	<input v-model="lastname" type="text" id="lastname" name="lastname" class="form-control" placeholder="Last Name">
+    	
+    	
+        <input v-model="email" type="text" id="email" name="email" class="form-control" placeholder="Email">
+    	
+    	
+    	<div class="form-group">
+		    <select class="form-control" v-model="roleselected">
+		    	<option disabled value="">Please select your role</option>
+		    	<option selected>DRIVER</option>
+		    	<option>PASSENGER</option>
+		    </select>
+		</div>
+    	
+    	<input v-if="roleselected=='DRIVER'" v-model="maxplaces" id="maxplaces" value="6" name="maxplaces" type="text" class="form-control" placeholder="Max places">
+    	
+        <input v-if="roleselected=='DRIVER'" v-model="departuretime" id="departuretime" value="2018-01-01 15:00:00" name="departuretime" type="text" class="form-control" placeholder="Enter Departure Time">
+        
+    	<input v-if="roleselected=='DRIVER'" v-model="departureplace" id="departureplace" value="2018-01-01 15:00:00" name="departureplace" type="text" class="form-control" placeholder="Enter Departure Place">
+        
+        <button class="btn btn-lg btn-primary btn-block" v-on:Click="postRegistrationData()">Submit</button>
+    	 
+    	
+    </form>
+</div>
+
+</body>
+
+<script>
+	
+	var app = new Vue({
+		el: '#app',
+		data: {
+			username: '',
+			password: '',
+			firstname: '',
+			lastname: '',
+			email: '',
+			maxplaces: '',
+			departuretime: '',
+			departureplace: '',
+			roleselected: ''
+		},
+		methods: {
+			postRegistrationData: function() {
+				var self = this;
+				self.parsedDate = moment(self.departuretime,"YYYY-MM-DD HH:mm:ss");
+				axios.post('/rideit/register/registernewuser',
+				{
+					username: self.username,
+				 	password: self.password,
+					firstname: self.firstname,
+					lastname: self.lastname,
+					email: self.email,
+					maxplaces: self.maxplaces,
+					departuretime: self.parsedDate,
+					departureplace: self.departureplace,
+					roleselected: self.roleselected
+				},
+				{ 'content-type': 'text/plain;charset=utf-8' })
+				.then(function(response){
+					self.result = response;
+					//console.log(self.result);
+					window.location.href="/rideit/login";
+				});
+  			
+			},
+			
+			
+			/*
+			postNewCarData: function() {
+				var self = this;
+				axios.post('/rideit/index/registernewcar',
+					{
+						drivername: self.drivername,
+					 	password: self.password,
+						firstname: self.firstname,
+						lastname: self.lastname,
+						email: self.email,
+						maxplaces: self.maxplaces,
+						members: ''
+					},
+					{ 'content-type': 'text/plain;charset=utf-8' })
+					.then(function(response){
+						self.result = response;
+  					});
+  			},
+  			getAllCars: function() {
+  				var self = this;
+  				axios.get("/rideit/registration/getallcar")
+  					.then(function(response){
+  						self.allcars = response.data;
+  						for(var i=0;i<self.allcars.length;i++){
+  							var carmembers = self.allcars[i].members;
+  							if(carmembers=="") {
+  								self.allcars[i].freeplaces = self.allcars[i].maxplaces;
+  							} else {
+  								var numOfMembers = carmembers.split(",").length;
+  								self.allcars[i].freeplaces = self.allcars[i].maxplaces - numOfMembers;
+  							}  							
+  						} 
+  						
+  					});
+  			}
+  			*/
+  		},
+  		mounted: function() {
+			document.getElementById('app').style.display = 'block';
+		}
+  		
+  		
+	});
+</script>
+</html>

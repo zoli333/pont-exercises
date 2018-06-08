@@ -1,0 +1,90 @@
+<html>
+<head>
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	 <link rel="stylesheet" type="text/css" href="./resources/css/style.css">
+
+</head>
+<body>
+
+<div id="app" class="container" style="display: none;">
+	<fieldset class="text-center">
+		 <legend class="h2 text-center">My car</legend>
+	</fieldset>
+	<!-- 
+	<table id="mycarlist" style="display: none" class="table table-responsive table-striped table-bordered m-0 p-0" >
+		  	 <tr >
+				 <th>Car Number</th>
+				 <th>Driver</th>
+				 <th>Members</th>
+	 			 <th>Max Places</th>
+	 			 <th>Free Places</th>
+	 			 <th>Sign up to a car</th>
+ 			 </tr>
+			 <tr v-for="car in allcars">
+				<td>{{car.id}}</td>
+				<td>{{car.drivername}}</td>
+				<td>{{car.members}}</td>
+				<td>{{car.maxplaces}}</td>
+				<td>{{car.freeplaces}}</td>
+				<td>
+					<input name="apply" id="apply" placeholder="Enter your username" type="text">
+					<button class="btn btn-primary btn-block">Apply</button>
+				</td>
+			 </tr>
+	</table>
+	 -->
+	<button class="btn btn-primary btn-block" v-on:click="getAllCars()">Apply</button>
+	
+</div>
+
+
+</body>
+
+
+<script>
+	
+	var app = new Vue({
+		el: '#app',
+		data: {
+			drivername: '',
+			password: '',
+			firstname: '',
+			lastname: '',
+			email: '',
+			maxplaces: '',
+			allcars: [],
+			freeplaces: {}
+		},
+		methods: {
+			getAllCars: function() {
+  				var self = this;
+  				axios.get("/rideit/driver/mycar")
+  					.then(function(response){
+  						console.log(response);
+  						/*
+  						self.allcars = response.data;
+  						for(var i=0;i<self.allcars.length;i++){
+  							var carmembers = self.allcars[i].members;
+  							if(carmembers=="") {
+  								self.allcars[i].freeplaces = self.allcars[i].maxplaces;
+  							} else {
+  								var numOfMembers = carmembers.split(",").length;
+  								self.allcars[i].freeplaces = self.allcars[i].maxplaces - numOfMembers;
+  							}  							
+  						} 
+  						*/
+  					});
+  			}
+  		},
+  		mounted: function() {
+			document.getElementById('app').style.display = 'block';
+		}
+  		
+  		
+	});
+</script>
+
+</html>

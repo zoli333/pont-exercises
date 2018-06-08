@@ -1,0 +1,67 @@
+<html>
+<head>
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="./resources/css/login.css">
+	<title>TeleCar</title>
+</head>
+<body>
+
+<div id="app" class="container">
+	<fieldset class="text-center">
+		 <legend class="h2 text-center">Welcome on TeleCar</legend>
+	</fieldset>
+	<form class="form-login" method="POST">
+	
+        <h3 class="form-login-heading text-center">Please sign in</h3>
+        <hr class="borderdiv">
+    
+        <label for="username" class="sr-only">Email address</label>
+        <input type="text" id="username" name="username" v-model="username" class="form-control" placeholder="Email address">
+    
+        <label for="password" class="sr-only">Password</label>
+        <input type="password" id="password" name="password" v-model="password" class="form-control" placeholder="Password">
+    
+        <button class="btn btn-lg btn-primary btn-block" v-on:click="postLogin()" type="submit">Sign in</button>
+    	
+    	<button class="btn btn-lg btn-primary btn-block" formaction="/rideit/register" type="submit">Register</button>
+    	
+    </form>
+</div>
+
+<script>
+	
+	var app = new Vue({
+		el: '#app',
+		data: {
+			username: '',
+			password: ''
+		},
+		methods: {
+			postLogin: function() {
+				var self = this;
+				axios.post('/rideit/login',
+				{
+					username: self.username,
+				 	password: self.password
+				},
+				{ 'content-type': 'multipart/form-data' })
+				.then(function(response){
+					self.result = response;
+					//console.log(self.result);
+					//window.location.href="/rideit/login";
+				});
+  			}
+		},
+  		mounted: function() {
+			document.getElementById('app').style.display = 'block';
+		}
+  		
+  		
+	});
+</script>
+
+</body>
+</html>
