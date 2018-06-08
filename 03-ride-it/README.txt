@@ -17,7 +17,8 @@ Usage:
   -currently you can register to a car as passenger, and remove yourself from it7
   
 Important:
-  If you sign in as driver Do Not Try to remove/add yourself to a car, so I recommend to log in always as passenger. This feature is not implemented yet but is being under development.
+  If you sign in as driver Do Not Try to remove/add yourself to a car, so I recommend to log in always as passenger.
+  This feature is not implemented yet but it is under development.
 
 Have fun..
 
