@@ -6,13 +6,6 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.js"></script>
 	
-	 <!-- <link rel="stylesheet" type="text/css" href="./resources/css/style.css"> -->
-	
-	
-	<style>
-		.contime .conplace 
-	</style>
-	
 </head>
 <body>
 
@@ -80,34 +73,6 @@
 							</div>
 							
 						</form>
-						<!-- 
-						<form v-bind:id="car.car_id" class="formclass" v-on:submit.prevent>
-							
-							<div v-bind:id="car.car_id" class="checkbox mb-3">
-								<label v-bind:id="car.car_id">
-						        	<input type="checkbox" v-bind:id="car.car_id" v-on:click="getId($event)" v-model="checked">Check this button for later/sooner connection time and place
-						        </label>
-						    </div>
-						    <div v-bind:id="car.car_id">
-						    	<p>(If you not, the driver's departure place and time will be defined as yours as well!!)</p>
-						    </div>
-						     
-							<div style="maring: 0; padding: 0">
-								<div class="form-group">
-			 					 	<input type="text" class="contime form-control" v-bind:id="car.car_id"  v-model="connectiontime" placeholder="Enter Time (YYYY-MM-DD HH:MM:SS)" required>
-								</div>
-								
-								<div class="form-group">
-									<input type="text" class="conplace form-control" v-bind:id="car.car_id" v-model="connectionplace" placeholder="Enter Place" required>
-								</div>
-							</div>
-							<div class="col-md-12"> 
-							    <button class="btn btn-primary btn-lg" style="width:250px;" v-bind:id="car.car_id" name="applybut" v-bind="{ch: checked}" v-on:click="postSubscription($event)" type="submit">Apply</button>
-							</div>
-							
-					
-						</form>
-						-->
 					</td>
 				</tr>
 			</tbody>	
@@ -121,15 +86,20 @@
 	var app = new Vue({
 		el: '#app',
 		data: {
-			car_id: '',
-			allcars: [],
-			freeplaces: {},
-			membersnameandemail: {},
-			membersconnectiontime: {},
-			membersconnectionplace: {},
-			connectiontime: {},
-			connectionplace: {},
-			checked: {}
+			car_id: '', //car id from database, local reference to help
+			allcars: [], //carlist from database
+			freeplaces: {}, //number of freeplaces (added to allcars object on javascript side / locally)
+			membersnameandemail: {}, //username and email to display (added to allcars object on javascript side / locally) 
+			membersconnectiontime: {}, //members means member's connection time for a specific car (added to allcars object on javascript side / locally)
+			membersconnectionplace: {}, //same here members==member's (on member) (added to allcars object on javascript side / locally)
+			
+			connectiontime: {}, //another variable for getting the connection time for a secific car, defined by the user
+			connectionplace: {}, // the same, the connection place defined by the current user logged in
+			checked: {} //if the user checked the checkbutton
+			//these last 3 parameters are defined as a model (v-model) to get the defined data for a specific car. 
+			//This prevents the following: 
+			//  When (for example) a user clicks on a checkbutton, we dont want all checkbuttons to be marked, and for example
+			// all connection time and/or place displayed in every table at the same time.
 		},
 		methods: {
 			getAllCars: function() {
@@ -170,7 +140,6 @@
   					self.connectiontime = inputconnectiontime;
   					self.connectionplace = inputconnectionplace;  					
   				}
-  				//console.log(self.connectiontime + ", " + self.connctionplace);
   				self.car_id = event.target.id;
   				axios.post('/rideit/index/subscription',
   					{
@@ -182,9 +151,6 @@
 					.then(function(response){
 						self.checked='';
 						window.location.href="/rideit/index";
-						//self.checked=false;
-						//document.getElementById(self.car_id).style.display = 'none';
-						
 					});
   						
   			},
@@ -199,10 +165,7 @@
   						{ 'content-type': 'text/plain;charset=utf-8' })
   						.then(function(response){
   							self.checked='';
-  							window.location.href="/rideit/index";
-  							//self.checked=false;
-  							//document.getElementById(self.car_id).style.display = 'none';
-  							
+  							window.location.href="/rideit/index";			
   						});
   			}
   		
@@ -216,27 +179,6 @@
   		
   		
 	});
-	
-/*
-postNewCarData: function() {
-	var self = this;
-	axios.post('/rideit/index/registernewcar',
-		{
-			drivername: self.drivername,
-		 	password: self.password,
-			firstname: self.firstname,
-			lastname: self.lastname,
-			email: self.email,
-			maxplaces: self.maxplaces,
-			members: ''
-		},
-		{ 'content-type': 'text/plain;charset=utf-8' })
-		.then(function(response){
-			self.result = response;
-				});
-		},
-*/
-
 </script>
 
 </html>
