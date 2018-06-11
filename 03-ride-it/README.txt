@@ -16,7 +16,8 @@ Usage:
     Any car will be listed for you, when at least it has one driver or one passenger, else you won't see it.
   
 Todos:
-  - define destination for the car with role driver (later should be given intermediate city destinations). With this separate the city, from the specific adress, make different columns for them -> make these searchable.
+  - define destination for the car with role driver (later should be given intermediate city destinations).
+  - Separate the city, from the specific adress, make different columns for them -> make these searchable.
   - make a search form, and button where the passenger can search for cars.
   - make the page listable - this means if the user dont want to search for specific destination, it can scroll between them.
   - limit the page to not to list more than 5 cars, for example.
