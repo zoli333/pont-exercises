@@ -62,10 +62,4 @@ public class LoginController {
         return model;
 	}
 	
-	@RequestMapping(value= "/index",method=RequestMethod.GET)
-	public ModelAndView getIndex() {
-		ModelAndView model = new ModelAndView();
-	 	model.setViewName("index");
-        return model;
-	}
 }

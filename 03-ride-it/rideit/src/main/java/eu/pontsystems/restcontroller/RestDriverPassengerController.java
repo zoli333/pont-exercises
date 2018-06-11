@@ -13,6 +13,7 @@ import javax.swing.plaf.synth.SynthSpinnerUI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,12 +39,8 @@ public class RestDriverPassengerController {
 	DriverPassengerIndexService driverService;
 	
 	
-	
-	
-	@GetMapping(path = "/index/getallcar",produces = "application/json")
+	@GetMapping(path = {"/passengerPage/getallcar","driverPage/getallcar"},produces = "application/json")
 	public ResponseEntity<?> getAllCars() {
-		System.out.println("ALLCARS CALL");
-		//System.out.println(getLoggedInUserName());
 		List<Car> cars = driverService.getCars();
 		List<Car> outputCars = new ArrayList<>();
 		for(Car c : cars) {
@@ -120,7 +117,7 @@ public class RestDriverPassengerController {
 	}
 	
 		
-	@PostMapping(path = "/index/subscription", consumes = "application/json", produces = "application/json")
+	@PostMapping(path = {"/driverPage/subscription","/passengerPage/subscription"}, consumes = "application/json", produces = "application/json")
 	public ResponseEntity<String> registerUser(@RequestBody SubscriptionData subScriptionData) throws ParseException {
 		User userData = driverService.findByUsername(getLoggedInUserName());
 		int carId = subScriptionData.getCar_id();
@@ -162,7 +159,7 @@ public class RestDriverPassengerController {
 		return new ResponseEntity<String>("subscribed!!!!", HttpStatus.OK);
 	}
 	
-	@PostMapping(path = "/index/removesubscription", consumes = "application/json", produces = "application/json")
+	@PostMapping(path = {"/driverPage/removesubscription","passengerPage/removesubscription"}, consumes = "application/json", produces = "application/json")
 	public ResponseEntity<String> removeUser(@RequestBody SubscriptionData subScriptionData) throws ParseException {
 		User userData = driverService.findByUsername(getLoggedInUserName());
 		String userRole = userData.getRole();
@@ -176,14 +173,14 @@ public class RestDriverPassengerController {
 	
 
 	
-	@GetMapping(path = "/index/numberofregisteredcars",produces = "application/json")
+	@GetMapping(path = {"/driverPage/numberofregisteredcars","/passengerPage/numberofregisteredcars"},produces = "application/json")
 	public ResponseEntity<?> getNumberOfRegisteredCars() {
 		int numberOfCars = driverService.getCars().size();
 		return new ResponseEntity<>(numberOfCars, HttpStatus.OK);
 		
 	}
 	
-	@PostMapping(path = "/index/registernewcar", consumes = "application/json", produces = "application/json")
+	@PostMapping(path = "/driverPage/registernewcar", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<String> registerNewCar(@RequestBody SubscriptionData subScriptionData) throws ParseException {
 		User userData = driverService.findByUsername(getLoggedInUserName());
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
