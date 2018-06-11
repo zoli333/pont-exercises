@@ -16,6 +16,7 @@ Usage:
     Any car will be listed for you, when at least it has one driver or one passenger, else you won't see it.
   
 Todos:
+  - ~~make passenger.html as index.html, change the controllers, also driver.html and passenger.html to working properly~~
   - define destination for the car with role driver (later should be given intermediate city destinations).
   - Separate the city, from the specific adress, make different columns for them -> make these searchable.
   - make a search form, and button where the passenger can search for cars.
