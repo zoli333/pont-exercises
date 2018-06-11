@@ -139,7 +139,7 @@
 		methods: {
 			getAllCars: function() {
   				var self = this;
-  				axios.get("/rideit/index/getallcar")
+  				axios.get("/rideit/driverPage/getallcar")
   					.then(function(response){
   						self.allcars = response.data;
   						self.numberOfRegisteredCars = response.data.length;
@@ -184,7 +184,7 @@
   						(inputmaxplaces !== undefined && inputmaxplaces !== null && inputmaxplaces !== "")) {
   					
   					self.car_id = event.target.id;
-  	  				axios.post('/rideit/index/subscription',
+  	  				axios.post('/rideit/driverPage/subscription',
   	  					{
   	  						car_id: self.car_id,
   	  						departuretime: inputdeparturetime,
@@ -210,7 +210,7 @@
   				var self = this;
   				self.car_id=event.target.id;
   				console.log("remove query")
-  				axios.post('/rideit/index/removesubscription',
+  				axios.post('/rideit/driverPage/removesubscription',
   	  					{
   	  						car_id: self.car_id,
   	  					},
