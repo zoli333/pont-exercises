@@ -27,10 +27,17 @@ public interface DriverPassengerRepository {
 	
 	public void subscribePassengerToCar(User user, int carId);
 	
+	public void subscribeDriverToCar(User user);
+	
 	public List<timeClass> getMembersConnectionTime(int carId);
 	
 	public List<placeClass> getMembersConnectionPlace(int carId);
 	
 	public void RemovePassengerFromCar(User user);
+	
+	public void RemoveDriverFromCar(User user);
+	
+	public void RegisterNewCar(User user);
+	
 	
 }

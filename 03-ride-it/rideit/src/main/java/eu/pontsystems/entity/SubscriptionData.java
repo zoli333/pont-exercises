@@ -12,14 +12,19 @@ public class SubscriptionData {
 		public SubscriptionData() {}
 		
 		
-		
 
-		public SubscriptionData(int id, int car_id, String connectiontime, String connectionplace) {
+		public SubscriptionData(int id, int car_id, String connectiontime, String connectionplace, String departuretime,
+				String departureplace, int maxplaces) {
 			this.id = id;
 			this.car_id = car_id;
 			this.connectiontime = connectiontime;
 			this.connectionplace = connectionplace;
+			this.departuretime = departuretime;
+			this.departureplace = departureplace;
+			this.maxplaces = maxplaces;
 		}
+
+
 
 		@Id
 		@GeneratedValue
@@ -28,8 +33,52 @@ public class SubscriptionData {
 		private int car_id;
 		private String connectiontime;
 		private String connectionplace;
+		private String departuretime;
+		private String departureplace;
+		private int maxplaces;
 		
 		
+		
+		public int getMaxplaces() {
+			return maxplaces;
+		}
+
+
+
+		public void setMaxplaces(int maxplaces) {
+			this.maxplaces = maxplaces;
+		}
+
+
+
+		public String getDeparturetime() {
+			return departuretime;
+		}
+
+
+
+
+		public void setDeparturetime(String departuretime) {
+			this.departuretime = departuretime;
+		}
+
+
+
+
+		public String getDepartureplace() {
+			return departureplace;
+		}
+
+
+
+
+		public void setDepartureplace(String departureplace) {
+			this.departureplace = departureplace;
+		}
+
+
+
+
 		public String getConnectiontime() {
 			return connectiontime;
 		}

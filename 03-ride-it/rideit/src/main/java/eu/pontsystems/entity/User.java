@@ -66,7 +66,7 @@ public class User{
 	@Transient
 	private String departureplace;
 	
-	@ManyToOne(fetch=FetchType.EAGER)
+	@ManyToOne(cascade=CascadeType.ALL)
 	@JoinColumn(name = "car_id")
 	@JsonIgnore
 	private Car car;
@@ -176,15 +176,7 @@ public class User{
 		this.departureplace = departureplace;
 	}
 
-	@Override
-	public String toString() {
-		return "User [id=" + id + ", username=" + username + ", password=" + password + ", firstname=" + firstname
-				+ ", lastname=" + lastname + ", email=" + email + ", connectionTime=" + connectionTime
-				+ ", connectionPlace=" + connectionPlace + ", role=" + role + ", maxplaces=" + maxplaces
-				+ ", departuretime=" + departuretime + ", departureplace=" + departureplace + ", car=" + car + "]";
-	}
 
-	
 	
 	
 	

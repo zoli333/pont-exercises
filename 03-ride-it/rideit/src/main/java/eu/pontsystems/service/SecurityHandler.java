@@ -29,7 +29,14 @@ public class SecurityHandler implements AuthenticationSuccessHandler{
 		System.out.println("authentication success");
 		Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
 		for(GrantedAuthority authority : authorities) {
-			if(authority.getAuthority().equals("ROLE_DRIVER") || authority.getAuthority().equals("ROLE_PASSENGER")) {
+			if(authority.getAuthority().equals("ROLE_DRIVER")) {
+				try {
+					redirectStrategy.sendRedirect(request, response, "/driverPage");
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			} else if(authority.getAuthority().equals("ROLE_PASSENGER")) {
 				try {
 					redirectStrategy.sendRedirect(request, response, "/index");
 				} catch (Exception e) {

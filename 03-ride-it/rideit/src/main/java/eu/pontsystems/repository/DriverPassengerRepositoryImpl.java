@@ -8,6 +8,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
@@ -39,7 +40,12 @@ public class DriverPassengerRepositoryImpl implements DriverPassengerRepository 
 		System.out.println("check happened!!!!!!");
 		Query q = entityManager.createNativeQuery("select u.* from user u where u.car_id = :carId and u.role='DRIVER'", User.class);
 		q.setParameter("carId", carId);
-		User user = (User)q.getSingleResult();
+		User user = null;
+		try {
+			user = (User)q.getSingleResult();			
+		}catch (NoResultException nre){
+			return null;
+		}
 		return user;
 	}
 
@@ -97,6 +103,57 @@ public class DriverPassengerRepositoryImpl implements DriverPassengerRepository 
 		entityManager.merge(updateUser);
 	}
 
+
+	@Override
+	public void RemoveDriverFromCar(User user) {
+		Car driverCar = user.getCar();
+		user.setCar(null);
+		driverCar.setDeparturetime(null);
+		driverCar.setDepartureplace(null);
+		driverCar.setMaxplaces(0);
+		entityManager.merge(user);
+		entityManager.merge(driverCar);
+		
+	}
+
+
+	@Override
+	public void subscribeDriverToCar(User user) {
+		//if the car has been not assigned to any driver, find it
+		Query q = entityManager.createNativeQuery("select c.* from car c where c.maxplaces=0", Car.class);
+		Car car = null;
+		try {
+			car = (Car)q.getSingleResult();			
+		}catch (NoResultException nre){
+			//pass
+		}
+		if(car == null) {
+			//create a new car
+			car=new Car();
+		}else {
+			//assign the user for the existing car
+			user.setCar(car);
+		}
+		car.setDeparturetime(user.getDeparturetime());//set the car's departure time, and place
+		car.setDepartureplace(user.getDepartureplace());
+		car.setMaxplaces(user.getMaxplaces());
+		entityManager.merge(user);
+	}
+
+
+	@Override
+	public void RegisterNewCar(User user) {
+		Car car = new Car();
+		car.setDeparturetime(user.getDeparturetime());
+		car.setDepartureplace(user.getDepartureplace());
+		car.setMaxplaces(user.getMaxplaces());
+		user.setCar(car);
+		entityManager.merge(user);
+		
+	}
+
+	
+	
 
 	
 	

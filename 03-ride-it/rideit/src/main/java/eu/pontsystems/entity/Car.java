@@ -45,7 +45,7 @@ public class Car  {
 	@Column(name="departureplace")
 	private String departureplace;
 	
-	@OneToMany(mappedBy = "car", 
+	@OneToMany(mappedBy = "car",
 		        cascade = CascadeType.ALL
 	)
 	@JsonIgnore
@@ -53,6 +53,9 @@ public class Car  {
 	
 	@Transient
 	private String departuretimestring;
+	
+	@Transient
+	private String departureplacestring;
 	
 	@Transient
 	private String connectiontimestring;
@@ -71,6 +74,15 @@ public class Car  {
 	
 	
 	
+	
+	public String getDepartureplacestring() {
+		return departureplacestring;
+	}
+
+	public void setDepartureplacestring(String departureplacestring) {
+		this.departureplacestring = departureplacestring;
+	}
+
 	public String getConnectiontimestring() {
 		return connectiontimestring;
 	}
@@ -158,10 +170,6 @@ public class Car  {
 	public void setDepartureplace(String departureplace) {
 		this.departureplace = departureplace;
 	}
-
-	
-	
-
 
 	
 	

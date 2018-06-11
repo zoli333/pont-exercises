@@ -19,7 +19,8 @@
 -- Table structure for table `car`
 --
 
-use rideit;
+CREATE DATABASE IF NOT EXISTS rideit;
+USE rideit;
 
 DROP TABLE IF EXISTS `car`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
@@ -30,7 +31,7 @@ CREATE TABLE `car` (
   `departuretime` datetime DEFAULT NULL,
   `departureplace` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`car_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -39,6 +40,7 @@ CREATE TABLE `car` (
 
 LOCK TABLES `car` WRITE;
 /*!40000 ALTER TABLE `car` DISABLE KEYS */;
+INSERT INTO `car` VALUES (1,12,'2018-02-02 12:12:12','Budapest, Fehérvár út 11.');
 /*!40000 ALTER TABLE `car` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -63,7 +65,7 @@ CREATE TABLE `user` (
   PRIMARY KEY (`user_id`),
   KEY `user_car_fk_idx` (`car_id`),
   CONSTRAINT `user_car_fk` FOREIGN KEY (`car_id`) REFERENCES `car` (`car_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -72,6 +74,7 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
+INSERT INTO `user` VALUES (1,'zoli','123','Nagy','Zoli','zoli@gmail.com',NULL,NULL,'DRIVER',1),(2,'kati','123','Nagy','Katalin','kati@gmail.com','2018-02-02 11:11:11','Kaposvár','PASSENGER',1);
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -84,4 +87,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-06-08 23:16:26
+-- Dump completed on 2018-06-10 22:33:59

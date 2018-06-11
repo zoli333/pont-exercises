@@ -66,6 +66,19 @@ public class DriverPassengerIndexService {
 	public void RemovePassengerFromCar(User user) {
 		dirverPassengerRepository.RemovePassengerFromCar(user);
 	}
+	
+	public void RemoveDriverFromCar(User user) {
+		dirverPassengerRepository.RemoveDriverFromCar(user);
+	}
+	public void subscribeDriverToCar(User user) {
+		dirverPassengerRepository.subscribeDriverToCar(user);
+	}
+	
+	public void registerNewCar(User user) {
+		dirverPassengerRepository.RegisterNewCar(user);
+	}
+	
+	
 
 		
 }

@@ -42,43 +42,80 @@ public class RestDriverPassengerController {
 	
 	@GetMapping(path = "/index/getallcar",produces = "application/json")
 	public ResponseEntity<?> getAllCars() {
-		
+		System.out.println("ALLCARS CALL");
 		//System.out.println(getLoggedInUserName());
 		List<Car> cars = driverService.getCars();
-		
+		List<Car> outputCars = new ArrayList<>();
 		for(Car c : cars) {
-			String deptTimeStringFormat = c.getDeparturetime().toString();
-			c.setDeparturetimestring(deptTimeStringFormat);
 			int car_id = c.getCar_id();
 			User driver = driverService.getDriverById(car_id);
-			String driverName = driver.getFirstname() + " " + driver.getLastname();
-			c.setDriverEmailAddress(driver.getEmail());
-			c.setDriverName(driverName);
 			List<User> memberList = driverService.getMembers(car_id);
 			
-			StringBuilder members = new StringBuilder();
-			for(User u : memberList) {
-				members.append(u.getFirstname() + " " + u.getLastname() + " - " + u.getEmail().toString() + ",");
+			if(driver == null && memberList.size()>0) {
+				StringBuilder members = new StringBuilder();
+				for(User u : memberList) {
+					members.append(u.getFirstname() + " " + u.getLastname() + " - " + u.getEmail().toString() + ",");
+				}
+				
+				StringBuilder membersConnectionTimeString = new StringBuilder();
+				List<timeClass> membersConnectionTime = driverService.getMembersConnectionTime(car_id);
+				for(timeClass t : membersConnectionTime) {
+					membersConnectionTimeString.append(t.getConnection_time().toString() + ",");
+				}
+				
+				StringBuilder membersConnectionPlaceString = new StringBuilder();
+				List<placeClass> membersConnectionPlace = driverService.getMembersConnectionPlace(car_id);
+				for(placeClass p : membersConnectionPlace) {
+					membersConnectionPlaceString.append(p.getConnection_place() + ",");
+				}
+				
+				c.setMembers(members.toString());
+				c.setConnectiontimestring(membersConnectionTimeString.toString());
+				c.setConnectionplacestring(membersConnectionPlaceString.toString());
+				outputCars.add(c);
+			}else if(driver != null && memberList.size() == 0) {
+				String driverName = driver.getFirstname() + " " + driver.getLastname();
+				c.setDriverEmailAddress(driver.getEmail());
+				c.setDriverName(driverName);
+				if(c.getDeparturetime()!=null && c.getDepartureplace() != null && new Integer(car_id)!=null) {
+					String deptTimeStringFormat = c.getDeparturetime().toString();
+					c.setDeparturetimestring(deptTimeStringFormat);
+					c.setDepartureplacestring(driver.getDepartureplace());
+				}
+				outputCars.add(c);
+			}else if(driver != null && memberList.size()>0) {
+				String driverName = driver.getFirstname() + " " + driver.getLastname();
+				c.setDriverEmailAddress(driver.getEmail());
+				c.setDriverName(driverName);
+				String deptTimeStringFormat = c.getDeparturetime().toString();
+				c.setDeparturetimestring(deptTimeStringFormat);
+				c.setDepartureplacestring(driver.getDepartureplace());
+				StringBuilder members = new StringBuilder();
+				for(User u : memberList) {
+					members.append(u.getFirstname() + " " + u.getLastname() + " - " + u.getEmail().toString() + ",");
+				}
+				
+				StringBuilder membersConnectionTimeString = new StringBuilder();
+				List<timeClass> membersConnectionTime = driverService.getMembersConnectionTime(car_id);
+				for(timeClass t : membersConnectionTime) {
+					membersConnectionTimeString.append(t.getConnection_time().toString() + ",");
+				}
+				
+				StringBuilder membersConnectionPlaceString = new StringBuilder();
+				List<placeClass> membersConnectionPlace = driverService.getMembersConnectionPlace(car_id);
+				for(placeClass p : membersConnectionPlace) {
+					membersConnectionPlaceString.append(p.getConnection_place() + ",");
+				}
+				
+				c.setMembers(members.toString());
+				c.setConnectiontimestring(membersConnectionTimeString.toString());
+				c.setConnectionplacestring(membersConnectionPlaceString.toString());
+				outputCars.add(c);
 			}
 			
-			StringBuilder membersConnectionTimeString = new StringBuilder();
-			List<timeClass> membersConnectionTime = driverService.getMembersConnectionTime(car_id);
-			for(timeClass t : membersConnectionTime) {
-				membersConnectionTimeString.append(t.getConnection_time().toString() + ",");
-			}
-			
-			StringBuilder membersConnectionPlaceString = new StringBuilder();
-			List<placeClass> membersConnectionPlace = driverService.getMembersConnectionPlace(car_id);
-			for(placeClass p : membersConnectionPlace) {
-				membersConnectionPlaceString.append(p.getConnection_place() + ",");
-			}
-			
-			c.setMembers(members.toString());
-			c.setConnectiontimestring(membersConnectionTimeString.toString());
-			c.setConnectionplacestring(membersConnectionPlaceString.toString());
-			
-		}
-		return new ResponseEntity<>(cars, HttpStatus.OK);
+		}		
+				
+		return new ResponseEntity<>(outputCars, HttpStatus.OK);
 		
 	}
 	
@@ -87,29 +124,84 @@ public class RestDriverPassengerController {
 	public ResponseEntity<String> registerUser(@RequestBody SubscriptionData subScriptionData) throws ParseException {
 		User userData = driverService.findByUsername(getLoggedInUserName());
 		int carId = subScriptionData.getCar_id();
-		if(!(subScriptionData.getConnectiontime().equalsIgnoreCase("") || subScriptionData.getConnectionplace().equalsIgnoreCase(""))) {
+		if(userData.getRole().equalsIgnoreCase("PASSENGER")) {
+			if(!(subScriptionData.getConnectiontime().equalsIgnoreCase("") || subScriptionData.getConnectionplace().equalsIgnoreCase(""))) {
+				SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				Date parsedconTime=null;
+				try {
+					parsedconTime = formatter.parse(subScriptionData.getDeparturetime());	
+				} catch (ParseException pe){
+					return new ResponseEntity<String>("parseerror", HttpStatus.OK);
+				} 
+			    Timestamp conTime = new java.sql.Timestamp(parsedconTime.getTime());
+			    userData.setConnectionTime(conTime);
+				userData.setConnectionPlace(subScriptionData.getConnectionplace());
+			} else {
+				User driver = driverService.getDriverById(carId);
+				userData.setConnectionTime(driver.getCar().getDeparturetime());
+				userData.setConnectionPlace(driver.getCar().getDepartureplace());
+			}
+			driverService.subscribePassengerToCar(userData, carId);
+		}else if(userData.getRole().equalsIgnoreCase("DRIVER")) {
 			SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			Date parsedconTime = formatter.parse(subScriptionData.getConnectiontime());
-		    Timestamp conTime = new java.sql.Timestamp(parsedconTime.getTime());
-		    userData.setConnectionTime(conTime);
-			userData.setConnectionPlace(subScriptionData.getConnectionplace());
-		} else {
-			User driver = driverService.getDriverById(carId);
-			userData.setConnectionTime(driver.getCar().getDeparturetime());
-			userData.setConnectionPlace(driver.getCar().getDepartureplace());
+			Date parseddepTime=null;
+			try {
+				parseddepTime = formatter.parse(subScriptionData.getDeparturetime());	
+			} catch (ParseException pe){
+				return new ResponseEntity<String>("parseerror", HttpStatus.OK);
+			} 
+			Timestamp conTime = new java.sql.Timestamp(parseddepTime.getTime());
+			userData.setDeparturetime(conTime);
+			userData.setDepartureplace(subScriptionData.getDepartureplace());
+			userData.setMaxplaces(subScriptionData.getMaxplaces());
+			driverService.subscribeDriverToCar(userData);
 		}
+				
 		
-		driverService.subscribePassengerToCar(userData, carId);
+		
 		return new ResponseEntity<String>("subscribed!!!!", HttpStatus.OK);
 	}
 	
 	@PostMapping(path = "/index/removesubscription", consumes = "application/json", produces = "application/json")
 	public ResponseEntity<String> removeUser(@RequestBody SubscriptionData subScriptionData) throws ParseException {
 		User userData = driverService.findByUsername(getLoggedInUserName());
-		
-		driverService.RemovePassengerFromCar(userData);
+		String userRole = userData.getRole();
+		if(userRole.equalsIgnoreCase("DRIVER")) {
+			driverService.RemoveDriverFromCar(userData);
+		} else if(userRole.equalsIgnoreCase("PASSENGER")) {
+			driverService.RemovePassengerFromCar(userData);	
+		}
 		return new ResponseEntity<String>("Successfully removed!!!!", HttpStatus.OK);
 	}
+	
+
+	
+	@GetMapping(path = "/index/numberofregisteredcars",produces = "application/json")
+	public ResponseEntity<?> getNumberOfRegisteredCars() {
+		int numberOfCars = driverService.getCars().size();
+		return new ResponseEntity<>(numberOfCars, HttpStatus.OK);
+		
+	}
+	
+	@PostMapping(path = "/index/registernewcar", consumes = "application/json", produces = "application/json")
+	public ResponseEntity<String> registerNewCar(@RequestBody SubscriptionData subScriptionData) throws ParseException {
+		User userData = driverService.findByUsername(getLoggedInUserName());
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date parseddepTime=null;
+		try {
+			parseddepTime = formatter.parse(subScriptionData.getDeparturetime());	
+		} catch (ParseException pe){
+			return new ResponseEntity<String>("parseerror", HttpStatus.OK);
+		} 
+		Timestamp depTime = new java.sql.Timestamp(parseddepTime.getTime());
+		userData.setDeparturetime(depTime);
+		userData.setDepartureplace(subScriptionData.getDepartureplace());
+		userData.setMaxplaces(subScriptionData.getMaxplaces());
+		driverService.subscribeDriverToCar(userData);
+		return new ResponseEntity<String>("Successfully registered new car!!!!", HttpStatus.OK);
+	}
+	
+	
 	
 	private String getLoggedInUserName() {
 		Object principal = SecurityContextHolder.getContext()
