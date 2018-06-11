@@ -38,7 +38,7 @@ public class SecurityHandler implements AuthenticationSuccessHandler{
 				}
 			} else if(authority.getAuthority().equals("ROLE_PASSENGER")) {
 				try {
-					redirectStrategy.sendRedirect(request, response, "/index");
+					redirectStrategy.sendRedirect(request, response, "/passengerPage");
 				} catch (Exception e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
