@@ -10,10 +10,10 @@ The project is still under developement.
 
 Usage:
 
-  -register users into database,
-  -log in / sign in as driver or passenger as your role.
-  -you will be redirected to passenger.html or driver.html depending on which role you have passegner or driver. 
-    Any car will be listed for you, when at least it has one driver or one passenger, else you won't see it.
+  - register users into database,
+  - log in / sign in as driver or passenger as your role.
+  - you will be redirected to passenger.html or driver.html depending on which role you have passegner or driver. 
+     Any car will be listed for you, when at least it has one driver or one passenger, else you won't see it.
   
 Completed:
   - ~refactor the java code put,post,delete~
