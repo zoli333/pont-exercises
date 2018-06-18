@@ -12,7 +12,7 @@ Usage:
 
   -register users into database,
   -log in / sign in as driver or passenger as your role.
-  -you will be redirected to index.html or driver.html depending on which role you have passegner or driver. 
+  -you will be redirected to passenger.html or driver.html depending on which role you have passegner or driver. 
     Any car will be listed for you, when at least it has one driver or one passenger, else you won't see it.
   
 Completed:
@@ -32,4 +32,3 @@ More Todos:
   - make the add, remove buttons' behaviour dynamic, by not refreshing the page and listing all the cars all the time when a button is clicked, figure out a new way to do this,without having to refresh the page, and querying allcars object all the time.
   - (later should be given intermediate city destinations)
   
-Z.
