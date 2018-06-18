@@ -100,27 +100,6 @@ public class DriverService {
 		}
 	}
 
-	
-	/*
-	public boolean applyDriver(User existingCar, Integer userId) {
-		User user = findUserById(userId);
-		if(user.getCar().getCarId()!=null) {
-			//if the user has been already applied to a car as driver			
-			return false;
-		}else {
-			//the user is free to apply for a car (becuase he is not has been assigned to an already existing car)
-			user.setDepartureTime(existingCar.getDepartureTime());
-			user.setDepartureCity(existingCar.getDepartureCity());
-			user.setDepartureAddress(existingCar.getDepartureAddress());
-			
-			user.setDestinationTime(existingCar.getDestinationTime());
-			user.setDestinationCity(existingCar.getDestinationCity());
-			user.setDestinationAddress(existingCar.getDestinationAddress());
-			
-			userService.saveUser(user);
-		}
-	}
-	*/
 	public User findUserById(Integer id) {
 		return userService.findById(id);
 	}
