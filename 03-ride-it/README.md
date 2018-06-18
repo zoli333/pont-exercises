@@ -1,6 +1,6 @@
 
 
-This is a first implementation uploaded for the 3rd task in pont-excersises. This is my first version.
+This is my current implementation uploaded for the 3rd task in pont-excersises.
 
 You can import this in eclipse, but make sure you also import the database (like into mysql workbench)
 
