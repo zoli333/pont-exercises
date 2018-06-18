@@ -1,0 +1,154 @@
+<html>
+<head>
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.17.0/dist/jquery.validate.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.js"></script>
+	<link rel="stylesheet" type="text/css" href="./resources/css/register.css">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	
+	<!--  <script src="./resources/js/validreg.js"></script>-->
+	<title>TeleCar</title>
+</head>
+<body>
+
+<div id="app" class="container" style="display: none;">
+	<form class="form-registration" method="POST" v-on:submit.prevent="checkForm">
+	
+        <h3 class="form-registration-heading text-center">Registration</h3>
+        <hr class="borderdiv">
+    
+		<div class="datapanel">
+			<input v-model="username" type="text" id="username" name="username" class="form-control" placeholder="User name" required>
+    	</div>
+        
+        <div class="datapanel">
+       		<input v-model="password" type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+    	</div>
+    	
+    	<div class="datapanel">
+        	<input v-model="firstname" type="text" id="firstname" name="firstname" class="form-control" placeholder="First Name" required>
+    	</div>
+    	
+    	<div class="datapanel">
+    		<input v-model="lastname" type="text" id="lastname" name="lastname" class="form-control" placeholder="Last Name" required>
+    	</div>
+    	
+    	<div class="datapanel">
+        	<input v-model="email" type="text" id="email" name="email" class="form-control" placeholder="Email" required>
+    	</div>
+    	
+    	<div class="datapanel">
+	    	<div class="form-group">
+			    <select class="form-control" v-model="role" required>
+			    	<option disabled value="">Please select your role</option>
+			    	<option selected>DRIVER</option>
+			    	<option>PASSENGER</option>
+			    </select>
+			</div>
+    	</div>
+        <button class="btn btn-lg btn-primary btn-block">Submit</button>
+    	 
+    	
+    </form>
+</div>
+
+</body>
+
+<script>
+	
+	var app = new Vue({
+		el: '#app',
+		data: {
+			username: '',
+			password: '',
+			firstname: '',
+			lastname: '',
+			email: '',
+			role: ''
+		},
+		methods: {
+			postRegistrationData: function() {
+				var self = this;
+				axios.post('/rideit/register/newUser',
+						{
+							username: self.username,
+						 	password: self.password,
+							firstname: self.firstname,
+							lastname: self.lastname,
+							email: self.email,
+							role: self.role
+						},
+						{ 'content-type': 'text/plain;charset=utf-8' })
+						.then(function(response){
+							self.result = response;
+							window.location.href="/rideit/login";
+						});					
+			},
+			checkForm: function() {
+				if($(".form-registration").valid()==true) {
+					this.postRegistrationData();
+				}
+			}
+			
+  		},
+  		mounted: function() {
+			document.getElementById('app').style.display = 'block';
+			$(".form-registration").validate({
+				onkeyup: false,
+				rules: {
+					username: {
+						required: true
+				    },
+				    password: {
+				        required: true
+				    },
+				    firstname: {
+				        required: true
+				    },
+				    lastname: {
+				        required: true
+				    },
+					phone: {
+						required: false,
+					},
+					email: {
+						required: true,
+						email: true
+					}
+				},
+				messages: {
+					//TODO
+					username: {
+						required: "Please enter a username",
+					},
+					firstname: "Please enter your firstname",
+					email: {
+						required: 'Please enter an email address.',
+						email: 'Please enter a <em>valid</em> email address.'
+					}
+				},
+				errorElement: "em",
+				errorPlacement: function ( error, element ) {
+					// Add the `help-block` class to the error element
+					error.addClass( "help-block" );
+					error.insertAfter( element );
+					
+				},
+				highlight: function ( element, errorClass, validClass ) {
+					$( element ).parents( ".datapanel").addClass("has-error").removeClass( "has-success" );
+				},
+				unhighlight: function (element, errorClass, validClass) {
+					$( element ).parents( ".datapanel").addClass( "has-success" ).removeClass( "has-error" );
+				}
+			});
+		}	
+		
+		
+  		
+	});
+</script>
+</html>

@@ -1,0 +1,388 @@
+<html>
+<head>
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.js"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.js"></script>
+	<link rel="stylesheet" type="text/css" href="./resources/css/driver.css">
+	
+</head>
+<body>
+
+<div id="app" class="container">
+
+	<!-- NEW CAR REGISTRATION -->
+	<div v-if="registerNewCarButton==true">
+		<button class="btn btn-primary btn-lg" style="width:250px;" v-on:click="registNewCarRegistrationForm = true">Register new car</button>
+		<span v-if="registNewCarRegistrationForm">
+			<form class="form-signin" v-on:submit.prevent>
+				<div><p>Please Enter the new car's registration data necessary</p></div>
+				<div class="form-group">
+					<input type="text" class="form-control"  v-model="departuretime" placeholder="Enter Departure Time (YYYY-MM-DD HH:MM:SS)" required>
+					<!-- // not done yet 
+					<p v-if="newcarparseerror==true">Wrong format!</p>
+					<p v-else=""></p>
+					 -->
+				</div>
+				<div class="form-group">
+					<input type="text" class="form-control" v-model="departurecity" placeholder="Enter Departure City" required>
+				</div>
+				<div class="form-group">
+					<input type="text" class="form-control" v-model="departureaddress" placeholder="Enter Departure Address" required>
+				</div>
+				<div class="form-group">
+					<input type="text" class="form-control"  v-model="destinationtime" placeholder="Enter Destination Time (YYYY-MM-DD HH:MM:SS)" required>
+				</div>
+				
+				<div class="form-group">
+					<input type="text" class="form-control" v-model="destinationcity" placeholder="Enter Destination City" required>
+				</div>
+				<div class="form-group">
+					<input type="text" class="form-control" v-model="destinationaddress" placeholder="Enter Destination Address" required>
+				</div>
+				<div class="form-group">
+					<input type="text" class="form-control" v-model="maxplaces" placeholder="Enter Max places" required>
+				</div>
+				
+				<button class="btn btn-primary btn-lg" style="width:250px;" v-on:click="postNewCarRegistration()" type="submit">Send</button>
+				<button class="btn btn-primary btn-lg" style="width:250px;" v-on:click="registNewCarRegistrationForm=false" >Cancel</button>				
+			</form>
+		</span>
+		<hr class="borderdiv">
+		
+	</div>
+	
+	
+	<!-- LIST OUT DRIVERS AND PASSENGERS -->
+	<div  v-if="numberOfCars>0">
+		<div v-if="(car.hasDriver && (car.passengerList.length==0 || car.passengerList.length>0))" class="row col-md-12" v-for="(car,index) in allcars" style="border: 1px solid black; margin-bottom: 25px; padding: 0;">
+			<table class="table table-bordered">
+				<!-- DRIVER -->
+				<thead>
+					<tr>
+						<th>Name</th>
+						<th>Email Address</th>
+						<th>Departure Time</th>
+						<th>Departure City</th>
+						<th>Departure Address</th>
+						<th>Destination Time</th>
+						<th>Destination City</th>
+						<th>Destination Address</th>
+						<th>Max places</th>
+						<th>Free places</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td colspan="10" class="text-center" style="background-color: lightgrey;">Driver</td>
+					</tr>
+					<tr v-if="car.hasDriver">
+						<td>{{car.driver.firstname + " " + car.driver.lastname}}</td>
+						<td>{{car.driver.email}}</td>
+						<td>{{car.driver.departureTime}}</td>
+						<td>{{car.driver.departureCity}}</td>
+						<td>{{car.driver.departureAddress}}</td>
+						<td>{{car.driver.destinationTime}}</td>
+						<td>{{car.driver.destinationCity}}</td>
+						<td>{{car.driver.destinationAddress}}</td>
+						<td>{{car.maxplaces}}</td>
+						<td>{{car.maxplaces - car.passengerList.length}}</td>
+					</tr>
+				</tbody>
+				
+				<!-- PASSENGER(S) -->
+				<thead  class="text-center" >
+					<tr>
+						<td colspan="10"style="background-color: lightgrey">Passengers</td>
+					</tr>
+				</thead>
+				<tbody>
+					<tr v-if="car.passengerList.length>0 " v-for="(passenger,pindex) in car.passengerList">
+						<td>{{passenger.firstname + " " + passenger.lastname}}</td>
+						<td>{{passenger.email}}</td>
+						<td>{{passenger.departureTime}}</td>
+						<td>{{passenger.departureCity}}</td>
+						<td>{{passenger.departureAddress}}</td>
+						<td>{{passenger.destinationTime}}</td>
+						<td>{{passenger.destiantionCity}}</td>
+						<td>{{passenger.destinationAddress}}</td>
+					</tr>
+					
+					
+					<!-- REMOVE IF I AM APPLIED FOR A CAR AS DRIVER-->
+					<tr v-if="car.hasDriver==true && car.driver.id == userId">
+						<td colspan="10">
+							<div class="col-md-12 text-center"> 
+								<button class="btn btn-primary btn-lg" style="width:250px;" v-on:click="deleteDriver(car.driver.car.carId, userId)" type="submit">Remove</button>
+							</div>
+						</td>
+						
+					</tr>
+					
+					<!-- APPLY AS A DRIVER FOR CARS TO THOSE WHICH DOESNT HAVE DRIVERS -->
+					<tr v-else-if="car.hasDriver==false">
+						<td colspan="10">
+							<div class="col-md-12 text-center"> 
+								<button class="btn btn-primary btn-lg" style="width:250px;" v-on:click="applyButton=true">Apply as driver</button>
+								<form v-if="applyButton==true" class="formclass" v-on:submit.prevent style="margin-top: 25px;">
+									<div class="form-group">
+										<input type="text" class="form-control"  v-model="car.inputdeparturetime" placeholder="Enter Departure Time (YYYY-MM-DD HH:MM:SS)" required>
+									</div>
+									<div class="form-group">
+										<input type="text" class="form-control" v-model="car.inputdeparturecity" placeholder="Enter Departure City" required>
+									</div>
+									<div class="form-group">
+										<input type="text" class="form-control" v-model="car.inputdepartureaddress" placeholder="Enter Departure Address" required>
+									</div>
+									<div class="form-group">
+										<input type="text" class="form-control"  v-model="car.inputdestinationtime" placeholder="Enter Destination Time (YYYY-MM-DD HH:MM:SS)" required>
+									</div>
+									
+									<div class="form-group">
+										<input type="text" class="form-control" v-model="car.inputdestinationcity" placeholder="Enter Destination City" required>
+									</div>
+									<div class="form-group">
+										<input type="text" class="form-control" v-model="car.inputdestinationaddress" placeholder="Enter Destination Address" required>
+									</div>
+									<div class="form-group">
+										<input type="text" class="form-control" v-model="car.inputmaxplaces" placeholder="Enter Max places" required>
+									</div>
+									<button class="btn btn-primary btn-lg" style="width:250px;" v-on:click="driverApply(car, userId)" type="submit">Send</button>
+									
+									<button class="btn btn-primary btn-lg" style="width:250px;" v-on:click="applyButton=false; errorMessage=''">Cancel</button>
+								</form>
+								<span v-if="errorMessage!=''">{{errorMessage}}</span>
+							</div>
+						</td>
+					</tr>
+					
+				</tbody>
+				
+			</table>
+		</div>
+	</div>
+	<div v-else-if="numberOfCars==0"><p>There has been no cars registered yet!!!</p></div>
+	<div v-else=""></div>
+</div>
+</body>
+
+
+<script>
+	var s;
+	var pl;
+	var app = new Vue({
+		el: '#app',
+		data: {
+			allcars: {},
+			passengerList: [],
+			driver: {},
+			userId: '',
+			numberOfCars: '',
+			hasDriver: true,
+			index: '',
+			pindex: '',
+			errorMessage: '',
+			
+			//new car registration buttons
+			registerNewCarButton: false,
+			registNewCarRegistrationForm: false,
+			applyButton: false,
+			
+			//new car registration data
+			departuretime: '',
+			departurecity: '',
+			departureaddress: '',
+			destinationtime: '',
+			destinationcity: '',
+			destinationaddress: '',
+			maxplaces: '',
+			
+			//apply buttons registration data
+			inputdeparturetime: {},
+			inputdeparturecity: {},
+			inputdepartureaddress: {},
+			inputdestinationtime: {},
+			inputdestinationcity: {},
+			inputdestinationaddress: {},
+			inputmaxplaces: {}
+			
+		},
+		methods: {
+			
+			//get all the cars, and set the "Register new car" button visible, if
+			//the user doesn't have any subscription for any car yet.
+			//this button will automatically change unseen for him/her if he/she creates
+			//a new car, or apply for one, that has either passenger or driver!
+			getAllCars: function() {
+  				var self = this;
+  				axios.get("/rideit/allCars")
+  					.then(function(response){
+  						self.userId = Object.keys(response.data)[0];
+  						self.numberOfCars = Object.values(response.data)[0].length;
+  						console.log(self.numberOfCars);
+  						self.allcars = Object.values(response.data)[0];
+  						self.allcars = self.convertToDateTimeString(self.allcars);
+  						self.allcars = self.getCarDriver(self.allcars);
+  						self.registerNewCarButton=self.showRegistrationButton(self.allcars, self.userId);
+  						self.allcars = self.makeMyCarFirst(self.allcars,self.userId);
+  						//self.showRegistrationButton(self.allcars, self.userId);
+  						
+  					});
+  				
+			},
+			//this function converts the timestamp format sent from java side 
+			//as json string format
+			convertToDateTimeString: function(cars) {
+				for(var i=0;i<cars.length;i++) {
+					if(cars[i].passengerList!=undefined){
+						for(var j=0;j<cars[i].passengerList.length;j++) {
+							var d, dateTime, date, time;
+							if(cars[i].passengerList[j].departureTime!=undefined){
+								d = new Date(cars[i].passengerList[j].departureTime);
+								dateTime = d.toLocaleString().split(".");
+								date = dateTime[0].trim()+"-"+dateTime[1].trim()+"-"+dateTime[2].trim();
+								time = dateTime[3].trim();
+								cars[i].passengerList[j].departureTime = date + " " + time;
+							}
+							if(cars[i].passengerList[j].destinationTime!=undefined){
+								d = new Date(cars[i].passengerList[j].destinationTime);
+								dateTime = d.toLocaleString().split(".");
+								date = dateTime[0].trim()+"-"+dateTime[1].trim()+"-"+dateTime[2].trim();
+								time = dateTime[3].trim();
+								cars[i].passengerList[j].destinationTime = date + " " + time;
+							}
+								
+						}
+	
+					}
+										
+				}
+				return cars;
+			},
+			
+			
+			//this function makes driver object for allcars object
+			//also, if the car has driver, remove this passenger from passengerList
+			//and put into the driver object. This way the allcars object will have
+			//two different local objects: driver, passengerList where driver has role "DRIVER"
+			//and the passengers have roles "PASSENGER"
+			getCarDriver: function(cars) {
+				for(var i=0;i<this.numberOfCars;i++) {
+					var foundDriver = false;
+					var j=0;
+					if(cars[i].passengerList.length!=0) {
+						for(j=0;j<cars[i].passengerList.length;j++) {
+							if(cars[i].passengerList[j].role=="DRIVER"){
+								cars[i].driver = cars[i].passengerList[j];
+								foundDriver=true;
+								break;
+							}
+						}
+						
+					}
+					if(foundDriver==true){
+						cars[i].passengerList.splice(j,1);
+						cars[i].hasDriver=true;	
+					}else{
+						cars[i].hasDriver=false;	
+					}
+				}
+				return cars;
+			},
+			//if the current logged in user has already subscribed for a car
+			//do not show her/him the "Register new car" button (this is also possible but for now this is tilted)
+			showRegistrationButton: function(cars, userId) {
+				for(var i=0;i<cars.length;i++) {
+					if(cars[i].driver!=null && cars[i].driver.id == userId) {
+						return false;
+					}
+				}
+				return true;
+			},
+			//this function makes the current users' car first place (if he/she has car) in the list
+			//and will be listed first in allcars object
+			makeMyCarFirst: function(cars, userId){
+				var swapIndex=-1;
+				for(var i=0;i<cars.length;i++) {
+					if(cars[i].driver!=null && cars[i].driver.id == userId) {
+						swapIndex=i;
+					}
+				}
+				if(swapIndex!=-1){
+					[cars[0], cars[swapIndex]] = [cars[swapIndex],cars[0]];
+				}
+				return cars;
+			},
+			
+			//post method for create a new car. In the database if there is one
+			//car which has been already removed, and left with 0 maxplaces, 
+			//the java backend will assigned his/her to this existing car, else create a new one for him/her
+  			postNewCarRegistration: function() {
+  				var self = this;
+  				axios.post('/rideit/cars',
+	  					{
+							departureTime:  moment(self.departuretime,"YYYY-MM-DD HH:MM:SS"),
+							departureCity: self.departurecity,
+							departureAddress: self.departureaddress,
+							destinationTime: moment(self.destinationtime,"YYYY-MM-DD HH:MM:SS"),
+							destinationCity: self.destinationcity,
+							destinationAddress: self.destinationaddress,
+							maxplaces: self.maxplaces
+	  					},
+						{ 'content-type': 'text/plain;charset=utf-8' })
+						.then(function(response){
+							window.location.href="/rideit/driverPage";
+						});	
+  			},
+  			deleteDriver: function(carId, userId) {
+  				console.log(carId, userId);
+  				var self = this;
+  				axios.delete('/rideit/cars/' + carId + '/users/' + userId,{data: { carId: 'carId', userId: userId}})
+  					.then(function(response) {
+  						window.location.href="/rideit/driverPage";
+  					});  				
+  			},
+  			driverApply(car, userId) {
+  				var self = this;
+  				var carId = car.carId;
+  				axios.put("/rideit/cars/"+carId+"/users/" + userId, {
+  							carId: carId,
+  							userId: userId,
+		  					departureTime: 	moment(car.inputdeparturetime,"YYYY-MM-DD HH:MM:SS"),
+		  					departureCity: car.inputdeparturecity,
+			  				departureAddress: car.inputdepartureaddress,
+			  				destinationTime: moment(car.inputdestinationtime,"YYYY-MM-DD HH:MM:SS"),
+			  				destinationCity: car.inputdestinationcity,
+			  				destinationAddress: car.inputdestinationaddress,
+			  				maxplaces: car.inputmaxplaces  							
+  						},
+  						{ 'content-type': 'text/plain;charset=utf-8' })
+						.then(function(response){
+							self.errorMessage = response.data;
+							//window.location.href="/rideit/driverPage";
+						});	
+  				
+  			}
+  			
+  		},
+  		mounted: function() {
+			document.getElementById('app').style.display = 'block';
+		}, 
+		created: function() {
+			this.getAllCars();
+			
+		}
+  		
+  		
+	});
+</script>
+
+</html>
+
+
+
+
+
+
+		
