@@ -31,115 +31,111 @@
 	
 	
 	<!-- LIST OUT DRIVERS AND PASSENGERS -->
-	<div  v-if="numberOfCars>0">
-		<div v-if="(car.hasDriver && (car.passengerList.length==0 || car.passengerList.length>0))" class="row col-md-12" v-for="(car,index) in allcars" style="border: 1px solid black; margin-bottom: 25px; padding: 0;">
-			<table class="table table-bordered">
-				<!-- DRIVER -->
-				<thead>
-					<tr>
-						<th>Name</th>
-						<th>Email Address</th>
-						<th>Departure Time</th>
-						<th>Departure City</th>
-						<th>Departure Address</th>
-						<th>Destination Time</th>
-						<th>Destination City</th>
-						<th>Destination Address</th>
-						<th>Max places</th>
-						<th>Free places</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr>
-						<td colspan="10" class="text-center" style="background-color: lightgrey;">Driver</td>
-					</tr>
-					<tr v-if="car.hasDriver">
-						<td>{{car.driver.firstname + " " + car.driver.lastname}}</td>
-						<td>{{car.driver.email}}</td>
-						<td>{{car.driver.departureTime}}</td>
-						<td>{{car.driver.departureCity}}</td>
-						<td>{{car.driver.departureAddress}}</td>
-						<td>{{car.driver.destinationTime}}</td>
-						<td>{{car.driver.destinationCity}}</td>
-						<td>{{car.driver.destinationAddress}}</td>
-						<td>{{car.maxplaces}}</td>
-						<td>{{car.maxplaces - car.passengerList.length}}</td>
-					</tr>
-				</tbody>
+	<div v-if="car.hasDriver || car.passengerList.length>0" class="row col-md-12" v-for="(car,index) in allcars" style="border: 1px solid black; margin-bottom: 25px; padding: 0;">
+		<table class="table table-bordered">
+			<!-- DRIVER -->
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Email Address</th>
+					<th>Departure Time</th>
+					<th>Departure City</th>
+					<th>Departure Address</th>
+					<th>Destination Time</th>
+					<th>Destination City</th>
+					<th>Destination Address</th>
+					<th>Max places</th>
+					<th>Free places</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td colspan="10" class="text-center" style="background-color: lightgrey;">Driver</td>
+				</tr>
+				<tr v-if="car.hasDriver">
+					<td>{{car.driver.firstname + " " + car.driver.lastname}}</td>
+					<td>{{car.driver.email}}</td>
+					<td>{{car.driver.departureTime}}</td>
+					<td>{{car.driver.departureCity}}</td>
+					<td>{{car.driver.departureAddress}}</td>
+					<td>{{car.driver.destinationTime}}</td>
+					<td>{{car.driver.destinationCity}}</td>
+					<td>{{car.driver.destinationAddress}}</td>
+					<td>{{car.maxplaces}}</td>
+					<td>{{car.maxplaces - car.passengerList.length}}</td>
+				</tr>
+			</tbody>
+			
+			<!-- PASSENGER(S) -->
+			<thead  class="text-center" >
+				<tr>
+					<td colspan="10"style="background-color: lightgrey">Passengers</td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr v-if="car.passengerList.length>0 " v-for="(passenger,pindex) in car.passengerList">
+					<td>{{passenger.firstname + " " + passenger.lastname}}</td>
+					<td>{{passenger.email}}</td>
+					<td>{{passenger.departureTime}}</td>
+					<td>{{passenger.departureCity}}</td>
+					<td>{{passenger.departureAddress}}</td>
+					<td>{{passenger.destinationTime}}</td>
+					<td>{{passenger.destiantionCity}}</td>
+					<td>{{passenger.destinationAddress}}</td>
+				</tr>
 				
-				<!-- PASSENGER(S) -->
-				<thead  class="text-center" >
-					<tr>
-						<td colspan="10"style="background-color: lightgrey">Passengers</td>
-					</tr>
-				</thead>
-				<tbody>
-					<tr v-if="car.passengerList.length>0 " v-for="(passenger,pindex) in car.passengerList">
-						<td>{{passenger.firstname + " " + passenger.lastname}}</td>
-						<td>{{passenger.email}}</td>
-						<td>{{passenger.departureTime}}</td>
-						<td>{{passenger.departureCity}}</td>
-						<td>{{passenger.departureAddress}}</td>
-						<td>{{passenger.destinationTime}}</td>
-						<td>{{passenger.destiantionCity}}</td>
-						<td>{{passenger.destinationAddress}}</td>
-					</tr>
-					
-					
-					<!-- REMOVE IF I AM APPLIED FOR A CAR AS DRIVER-->
-					<tr v-if="car.hasDriver==true && car.driver.id == userId">
-						<td colspan="10">
-							<div class="col-md-12 text-center"> 
-								<button class="btn btn-primary btn-lg" style="width:250px;" v-on:click="deleteDriver(car.driver.car.carId, userId)" type="submit">Remove</button>
-							</div>
-						</td>
-						
-					</tr>
-					
-					<!-- APPLY AS A DRIVER FOR CARS TO THOSE WHICH DOESNT HAVE DRIVERS -->
-					<tr v-else-if="car.hasDriver==false">
-						<td colspan="10">
-							<div class="col-md-12 text-center"> 
-								<button class="btn btn-primary btn-lg" style="width:250px;" v-on:click="applyButton=true">Apply as driver</button>
-								<form v-if="applyButton==true" class="formclass" v-on:submit.prevent style="margin-top: 25px;">
-									<div class="form-group">
-										<input type="text" class="form-control"  v-model="car.inputdeparturetime" placeholder="Enter Departure Time (YYYY-MM-DD HH:MM:SS)" required>
-									</div>
-									<div class="form-group">
-										<input type="text" class="form-control" v-model="car.inputdeparturecity" placeholder="Enter Departure City" required>
-									</div>
-									<div class="form-group">
-										<input type="text" class="form-control" v-model="car.inputdepartureaddress" placeholder="Enter Departure Address" required>
-									</div>
-									<div class="form-group">
-										<input type="text" class="form-control"  v-model="car.inputdestinationtime" placeholder="Enter Destination Time (YYYY-MM-DD HH:MM:SS)" required>
-									</div>
-									
-									<div class="form-group">
-										<input type="text" class="form-control" v-model="car.inputdestinationcity" placeholder="Enter Destination City" required>
-									</div>
-									<div class="form-group">
-										<input type="text" class="form-control" v-model="car.inputdestinationaddress" placeholder="Enter Destination Address" required>
-									</div>
-									<div class="form-group">
-										<input type="text" class="form-control" v-model="car.inputmaxplaces" placeholder="Enter Max places" required>
-									</div>
-									<button class="btn btn-primary btn-lg" style="width:250px;" v-on:click="driverApply(car, userId)" type="submit">Send</button>
-									
-									<button class="btn btn-primary btn-lg" style="width:250px;" v-on:click="applyButton=false; errorMessage=''">Cancel</button>
-								</form>
-								<span v-if="errorMessage!=''">{{errorMessage}}</span>
-							</div>
-						</td>
-					</tr>
-					
-				</tbody>
 				
-			</table>
-		</div>
+				<!-- REMOVE IF I AM APPLIED FOR A CAR AS DRIVER-->
+				<tr v-if="car.hasDriver==true && car.driver.id == userId">
+					<td colspan="10">
+						<div class="col-md-12 text-center"> 
+							<button class="btn btn-primary btn-lg" style="width:250px;" v-on:click="deleteDriver(car.driver.car.carId, userId)" type="submit">Remove</button>
+						</div>
+					</td>
+					
+				</tr>
+				
+				<!-- APPLY AS A DRIVER FOR CARS TO THOSE WHICH DOESNT HAVE DRIVERS -->
+				<tr v-else-if="car.hasDriver==false">
+					<td colspan="10">
+						<div class="col-md-12 text-center"> 
+							<button class="btn btn-primary btn-lg" style="width:250px;" v-on:click="applyButton=true">Apply as driver</button>
+							<form v-if="applyButton==true" class="formclass" v-on:submit.prevent style="margin-top: 25px;">
+								<div class="form-group">
+									<input type="text" class="form-control"  v-model="car.inputdeparturetime" placeholder="Enter Departure Time (YYYY-MM-DD HH:MM:SS)" required>
+								</div>
+								<div class="form-group">
+									<input type="text" class="form-control" v-model="car.inputdeparturecity" placeholder="Enter Departure City" required>
+								</div>
+								<div class="form-group">
+									<input type="text" class="form-control" v-model="car.inputdepartureaddress" placeholder="Enter Departure Address" required>
+								</div>
+								<div class="form-group">
+									<input type="text" class="form-control"  v-model="car.inputdestinationtime" placeholder="Enter Destination Time (YYYY-MM-DD HH:MM:SS)" required>
+								</div>
+								
+								<div class="form-group">
+									<input type="text" class="form-control" v-model="car.inputdestinationcity" placeholder="Enter Destination City" required>
+								</div>
+								<div class="form-group">
+									<input type="text" class="form-control" v-model="car.inputdestinationaddress" placeholder="Enter Destination Address" required>
+								</div>
+								<div class="form-group">
+									<input type="text" class="form-control" v-model="car.inputmaxplaces" placeholder="Enter Max places" required>
+								</div>
+								<button class="btn btn-primary btn-lg" style="width:250px;" v-on:click="driverApply(car, userId)" type="submit">Send</button>
+								
+								<button class="btn btn-primary btn-lg" style="width:250px;" v-on:click="applyButton=false; errorMessage=''">Cancel</button>
+							</form>
+							<span v-if="errorMessage!=''">{{errorMessage}}</span>
+						</div>
+					</td>
+				</tr>
+				
+			</tbody>
+			
+		</table>
 	</div>
-	<div v-else-if="numberOfCars==0"><p>There has been no cars registered yet!!!</p></div>
-	<div v-else=""></div>
 </div>
 </body>
 
@@ -211,7 +207,6 @@
   					.then(function(response){
   						self.userId = Object.keys(response.data)[0];
   						self.numberOfCars = Object.values(response.data)[0].length;
-  						console.log(self.numberOfCars);
   						self.allcars = Object.values(response.data)[0];
   						self.allcars = self.convertToDateTimeString(self.allcars);
   						self.allcars = self.getCarDriver(self.allcars);
@@ -318,7 +313,6 @@
 						.then(function(response){
 							self.flushNewCarRegData();
 							self.getAllCars();
-							//window.location.href="/rideit/driverPage";
 						});
   				
   			},
@@ -328,9 +322,10 @@
   				axios.delete('/rideit/cars/' + carId + '/users/' + userId,{data: { carId: 'carId', userId: userId}})
   					.then(function(response) {
   						self.getAllCars();
-  						//window.location.href="/rideit/driverPage";
   					});  				
   			},
+  			
+  			/*TODO: autogenerate the forms in the table for application of drivers for a car, make this to pass an object instead of parameters */ 
   			driverApply(car, userId) {
   				var self = this;
   				var carId = car.carId;
@@ -364,9 +359,6 @@
 		}, 
 		created: function() {
 			this.getAllCars();
-			
-
-			
 		}
   		
   		
