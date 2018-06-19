@@ -37,6 +37,7 @@ public class DriverController {
 	
 	@PostMapping(path="/cars",consumes = "application/json", produces = "application/json")
 	public ResponseEntity<?> registerNewCar(@RequestBody User newCar) {
+		System.out.println(newCar);
 		driverService.registerNewCar(newCar);
 		return new ResponseEntity<>("car registered!",HttpStatus.OK);
 	}

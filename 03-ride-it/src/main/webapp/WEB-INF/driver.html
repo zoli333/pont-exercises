@@ -18,33 +18,9 @@
 		<span v-if="registNewCarRegistrationForm">
 			<form class="form-signin" v-on:submit.prevent>
 				<div><p>Please Enter the new car's registration data necessary</p></div>
-				<div class="form-group">
-					<input type="text" class="form-control"  v-model="departuretime" placeholder="Enter Departure Time (YYYY-MM-DD HH:MM:SS)" required>
-					<!-- // not done yet 
-					<p v-if="newcarparseerror==true">Wrong format!</p>
-					<p v-else=""></p>
-					 -->
+				<div v-for="(value,key) in newCarRegData.data" class="form-group">
+					 <input type="text" class="form-control"  v-model="newCarRegData.data[key]" v-bind:placeholder="newCarRegData.placeholders[key]" required>
 				</div>
-				<div class="form-group">
-					<input type="text" class="form-control" v-model="departurecity" placeholder="Enter Departure City" required>
-				</div>
-				<div class="form-group">
-					<input type="text" class="form-control" v-model="departureaddress" placeholder="Enter Departure Address" required>
-				</div>
-				<div class="form-group">
-					<input type="text" class="form-control"  v-model="destinationtime" placeholder="Enter Destination Time (YYYY-MM-DD HH:MM:SS)" required>
-				</div>
-				
-				<div class="form-group">
-					<input type="text" class="form-control" v-model="destinationcity" placeholder="Enter Destination City" required>
-				</div>
-				<div class="form-group">
-					<input type="text" class="form-control" v-model="destinationaddress" placeholder="Enter Destination Address" required>
-				</div>
-				<div class="form-group">
-					<input type="text" class="form-control" v-model="maxplaces" placeholder="Enter Max places" required>
-				</div>
-				
 				<button class="btn btn-primary btn-lg" style="width:250px;" v-on:click="postNewCarRegistration()" type="submit">Send</button>
 				<button class="btn btn-primary btn-lg" style="width:250px;" v-on:click="registNewCarRegistrationForm=false" >Cancel</button>				
 			</form>
@@ -190,13 +166,28 @@
 			applyButton: false,
 			
 			//new car registration data
-			departuretime: '',
-			departurecity: '',
-			departureaddress: '',
-			destinationtime: '',
-			destinationcity: '',
-			destinationaddress: '',
-			maxplaces: '',
+			newCarRegData : 
+			{	
+				data: {
+						"departureTime": "",
+						"departureCity": "",
+						"departureAddress": "",
+						"destinationTime": "",
+						"destinationCity": "",
+						"destinationAddress": "",
+						"maxplaces": ""
+				},
+				placeholders: {
+						"departureTime": 'Enter Departure Time (YYYY-MM-DD HH:MM:SS)',
+						"departureCity": 'Enter Departure City',
+						"departureAddress": 'Enter Departure Address',
+						"destinationTime": 'Enter Destination Time (YYYY-MM-DD HH:MM:SS)',
+						"destinationCity": 'Enter Destination City',
+						"destinationAddress": 'Enter Destination Address',
+						"maxplaces": 'Enter Max places'
+				}
+			},
+			
 			
 			//apply buttons registration data
 			inputdeparturetime: {},
@@ -226,8 +217,6 @@
   						self.allcars = self.getCarDriver(self.allcars);
   						self.registerNewCarButton=self.showRegistrationButton(self.allcars, self.userId);
   						self.allcars = self.makeMyCarFirst(self.allcars,self.userId);
-  						//self.showRegistrationButton(self.allcars, self.userId);
-  						
   					});
   				
 			},
@@ -240,14 +229,14 @@
 							var d, dateTime, date, time;
 							if(cars[i].passengerList[j].departureTime!=undefined){
 								d = new Date(cars[i].passengerList[j].departureTime);
-								dateTime = d.toLocaleString().split(".");
+								dateTime = d.toLocaleString("hu").split(".");
 								date = dateTime[0].trim()+"-"+dateTime[1].trim()+"-"+dateTime[2].trim();
 								time = dateTime[3].trim();
 								cars[i].passengerList[j].departureTime = date + " " + time;
 							}
 							if(cars[i].passengerList[j].destinationTime!=undefined){
 								d = new Date(cars[i].passengerList[j].destinationTime);
-								dateTime = d.toLocaleString().split(".");
+								dateTime = d.toLocaleString("hu").split(".");
 								date = dateTime[0].trim()+"-"+dateTime[1].trim()+"-"+dateTime[2].trim();
 								time = dateTime[3].trim();
 								cars[i].passengerList[j].destinationTime = date + " " + time;
@@ -320,27 +309,26 @@
 			//the java backend will assigned his/her to this existing car, else create a new one for him/her
   			postNewCarRegistration: function() {
   				var self = this;
-  				axios.post('/rideit/cars',
-	  					{
-							departureTime:  moment(self.departuretime,"YYYY-MM-DD HH:MM:SS"),
-							departureCity: self.departurecity,
-							departureAddress: self.departureaddress,
-							destinationTime: moment(self.destinationtime,"YYYY-MM-DD HH:MM:SS"),
-							destinationCity: self.destinationcity,
-							destinationAddress: self.destinationaddress,
-							maxplaces: self.maxplaces
-	  					},
-						{ 'content-type': 'text/plain;charset=utf-8' })
+  				self.newCarRegData.data.departureTime=moment(self.newCarRegData.data.departureTime,"YYYY-MM-DD HH:MM:SS");
+  				self.newCarRegData.data.destinationTime=moment(self.newCarRegData.data.destinationTime,"YYYY-MM-DD HH:MM:SS");
+  				console.log(self.newCarRegData.data);
+  				axios.post('/rideit/cars',self.newCarRegData.data,
+							{ 'content-type': 'text/plain;charset=utf-8' }
+	  					)
 						.then(function(response){
-							window.location.href="/rideit/driverPage";
-						});	
+							self.flushNewCarRegData();
+							self.getAllCars();
+							//window.location.href="/rideit/driverPage";
+						});
+  				
   			},
   			deleteDriver: function(carId, userId) {
   				console.log(carId, userId);
   				var self = this;
   				axios.delete('/rideit/cars/' + carId + '/users/' + userId,{data: { carId: 'carId', userId: userId}})
   					.then(function(response) {
-  						window.location.href="/rideit/driverPage";
+  						self.getAllCars();
+  						//window.location.href="/rideit/driverPage";
   					});  				
   			},
   			driverApply(car, userId) {
@@ -363,6 +351,11 @@
 							//window.location.href="/rideit/driverPage";
 						});	
   				
+  			},
+  			flushNewCarRegData: function() {
+  				for(var i in this.newCarRegData.data) {
+  					this.newCarRegData.data[i] = "";
+  				}
   			}
   			
   		},
@@ -371,6 +364,8 @@
 		}, 
 		created: function() {
 			this.getAllCars();
+			
+
 			
 		}
   		
