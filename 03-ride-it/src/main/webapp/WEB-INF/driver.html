@@ -208,44 +208,13 @@
   						self.userId = Object.keys(response.data)[0];
   						self.numberOfCars = Object.values(response.data)[0].length;
   						self.allcars = Object.values(response.data)[0];
-  						self.allcars = self.convertToDateTimeString(self.allcars);
+  						self.allcars = self.convertDepartureTimeAndDeparturePlaceToString(self.allcars);
   						self.allcars = self.getCarDriver(self.allcars);
   						self.registerNewCarButton=self.showRegistrationButton(self.allcars, self.userId);
   						self.allcars = self.makeMyCarFirst(self.allcars,self.userId);
   					});
   				
 			},
-			//this function converts the timestamp format sent from java side 
-			//as json string format
-			convertToDateTimeString: function(cars) {
-				for(var i=0;i<cars.length;i++) {
-					if(cars[i].passengerList!=undefined){
-						for(var j=0;j<cars[i].passengerList.length;j++) {
-							var d, dateTime, date, time;
-							if(cars[i].passengerList[j].departureTime!=undefined){
-								d = new Date(cars[i].passengerList[j].departureTime);
-								dateTime = d.toLocaleString("hu").split(".");
-								date = dateTime[0].trim()+"-"+dateTime[1].trim()+"-"+dateTime[2].trim();
-								time = dateTime[3].trim();
-								cars[i].passengerList[j].departureTime = date + " " + time;
-							}
-							if(cars[i].passengerList[j].destinationTime!=undefined){
-								d = new Date(cars[i].passengerList[j].destinationTime);
-								dateTime = d.toLocaleString("hu").split(".");
-								date = dateTime[0].trim()+"-"+dateTime[1].trim()+"-"+dateTime[2].trim();
-								time = dateTime[3].trim();
-								cars[i].passengerList[j].destinationTime = date + " " + time;
-							}
-								
-						}
-	
-					}
-										
-				}
-				return cars;
-			},
-			
-			
 			//this function makes driver object for allcars object
 			//also, if the car has driver, remove this passenger from passengerList
 			//and put into the driver object. This way the allcars object will have
@@ -306,7 +275,6 @@
   				var self = this;
   				self.newCarRegData.data.departureTime=moment(self.newCarRegData.data.departureTime,"YYYY-MM-DD HH:MM:SS");
   				self.newCarRegData.data.destinationTime=moment(self.newCarRegData.data.destinationTime,"YYYY-MM-DD HH:MM:SS");
-  				console.log(self.newCarRegData.data);
   				axios.post('/rideit/cars',self.newCarRegData.data,
 							{ 'content-type': 'text/plain;charset=utf-8' }
 	  					)
@@ -351,8 +319,36 @@
   				for(var i in this.newCarRegData.data) {
   					this.newCarRegData.data[i] = "";
   				}
-  			}
-  			
+  			},
+  			//this function converts the timestamp format sent from java side 
+			//as json string format
+			convertDepartureTimeAndDeparturePlaceToString: function(cars) {
+				for(var i=0;i<cars.length;i++) {
+					if(cars[i].passengerList!=undefined){
+						for(var j=0;j<cars[i].passengerList.length;j++) {
+							var d, dateTime, date, time;
+							if(cars[i].passengerList[j].departureTime!=undefined){
+								d = new Date(cars[i].passengerList[j].departureTime);
+								dateTime = d.toLocaleString("hu").split(".");
+								date = dateTime[0].trim()+"-"+dateTime[1].trim()+"-"+dateTime[2].trim();
+								time = dateTime[3].trim();
+								cars[i].passengerList[j].departureTime = date + " " + time;
+							}
+							if(cars[i].passengerList[j].destinationTime!=undefined){
+								d = new Date(cars[i].passengerList[j].destinationTime);
+								dateTime = d.toLocaleString("hu").split(".");
+								date = dateTime[0].trim()+"-"+dateTime[1].trim()+"-"+dateTime[2].trim();
+								time = dateTime[3].trim();
+								cars[i].passengerList[j].destinationTime = date + " " + time;
+							}
+								
+						}
+	
+					}
+										
+				}
+				return cars;
+			}
   		},
   		mounted: function() {
 			document.getElementById('app').style.display = 'block';
