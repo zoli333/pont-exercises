@@ -21,10 +21,11 @@ Completed:
   - ~define destination for the car with role driver~ 
   - ~Separate the city, from the specific adress, make different columns for them (make them searchable)~
   - ~make the buttons dynamic, dont show the 2 apply or remove buttons, just for those tables where it is relevant.~
-
+  - ~form automatization / generation for "Register new car button"~
 
 Todos:
-  - make a search form, and button where the passenger can search for cars.
+  - make a search form, and button where the passenger can search for cars. Then list out the found cars, and make apply button
+  - auto generation for forms in the tables generated for drivers also.
   - make the page listable - this means if the user dont want to search for specific destination, it can scroll between them.
   - limit the page to not to list more than 5 cars, for example.
 
