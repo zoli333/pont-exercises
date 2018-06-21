@@ -99,8 +99,8 @@
 				<tr v-else-if="car.hasDriver==false">
 					<td colspan="10">
 						<div class="col-md-12 text-center"> 
-							<button class="btn btn-primary btn-lg" style="width:250px;" v-on:click="applyButton=true">Apply as driver</button>
-							<form v-if="applyButton==true" class="formclass" v-on:submit.prevent style="margin-top: 25px;">
+							<button class="btn btn-primary btn-lg" style="width:250px;" v-on:click="car.applyButton=true">Apply as driver</button>
+							<form v-if="car.applyButton==true" class="formclass" v-on:submit.prevent style="margin-top: 25px;">
 								<div class="form-group">
 									<input type="text" class="form-control"  v-model="car.inputdeparturetime" placeholder="Enter Departure Time (YYYY-MM-DD HH:MM:SS)" required>
 								</div>
@@ -125,7 +125,7 @@
 								</div>
 								<button class="btn btn-primary btn-lg" style="width:250px;" v-on:click="driverApply(car, userId)" type="submit">Send</button>
 								
-								<button class="btn btn-primary btn-lg" style="width:250px;" v-on:click="applyButton=false; errorMessage=''">Cancel</button>
+								<button class="btn btn-primary btn-lg" style="width:250px;" v-on:click="car.applyButton=false; errorMessage=''">Cancel</button>
 							</form>
 							<span v-if="errorMessage!=''">{{errorMessage}}</span>
 						</div>
@@ -159,7 +159,6 @@
 			//new car registration buttons
 			registerNewCarButton: false,
 			registNewCarRegistrationForm: false,
-			applyButton: false,
 			
 			//new car registration data
 			newCarRegData : 
@@ -222,6 +221,7 @@
 			//and the passengers have roles "PASSENGER"
 			getCarDriver: function(cars) {
 				for(var i=0;i<this.numberOfCars;i++) {
+					this.$set(cars[i],'applyButton',false);
 					var foundDriver = false;
 					var j=0;
 					if(cars[i].passengerList.length!=0) {
@@ -310,8 +310,7 @@
   						},
   						{ 'content-type': 'text/plain;charset=utf-8' })
 						.then(function(response){
-							self.errorMessage = response.data;
-							//window.location.href="/rideit/driverPage";
+							self.getAllCars();
 						});	
   				
   			},
