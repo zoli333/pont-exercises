@@ -38,6 +38,7 @@ public class DriverController {
 	@PostMapping(path="/cars",consumes = "application/json", produces = "application/json")
 	public ResponseEntity<?> registerNewCar(@RequestBody User newCar) {
 		System.out.println(newCar);
+		System.out.println("NEW CAR DATA: ");
 		driverService.registerNewCar(newCar);
 		return new ResponseEntity<>("car registered!",HttpStatus.OK);
 	}
@@ -49,14 +50,13 @@ public class DriverController {
 	}
 	
 	@PutMapping(path="/cars/{carId}/users/{userId}",consumes = "application/json", produces = "application/json")
-	public ResponseEntity<?> driverApply(@PathVariable(value="carId") Integer carId, @PathVariable(value="userId") Integer userId,@RequestBody User existingCar) {
+	public ResponseEntity<?> driverApply(@PathVariable(value="carId") Integer carId, @PathVariable(value="userId") Integer userId, @RequestBody User existingCar) {
 		boolean isApplied = driverService.applyDriver(carId, userId, existingCar);
 		if(isApplied) {
 			return new ResponseEntity<>("Successfully applied!!!!", HttpStatus.OK);	
 		}else {
 			return new ResponseEntity<>("You already have a car applied to, please remove your application and after you can apply to an existing car!", HttpStatus.OK);
-		}
-		
+		}	
 	}
 	
 }

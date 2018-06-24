@@ -44,18 +44,21 @@ public class DriverService {
 	
 	public void registerNewCar(User newCar) {
 		User newDriver = userService.findById(LoginController.userId);
-		Car freeCar = carService.getFreeCar();
+		List<Car> freeCar = carService.getFreeCar();
+		newDriver.setDepartureDate(newCar.getDepartureDate());
 		newDriver.setDepartureTime(newCar.getDepartureTime());
 		newDriver.setDepartureCity(newCar.getDepartureCity());
 		newDriver.setDepartureAddress(newCar.getDepartureAddress());
 		
+		newDriver.setDestinationDate(newCar.getDestinationDate());
 		newDriver.setDestinationTime(newCar.getDestinationTime());
 		newDriver.setDestinationCity(newCar.getDestinationCity());
 		newDriver.setDestinationAddress(newCar.getDestinationAddress());
 		if(freeCar!=null) {
 			//found free car
-			freeCar.setMaxplaces(newCar.getMaxplaces());
-			newDriver.setCar(freeCar);
+			Car freeCarFirst = freeCar.get(0);
+			freeCarFirst.setMaxplaces(newCar.getMaxplaces());
+			newDriver.setCar(freeCarFirst);
 			userService.saveUser(newDriver);
 		}else {
 			//not found free Car (maxplaces=0), so create a new one, with maxplaces defined
@@ -85,10 +88,12 @@ public class DriverService {
 			return false;
 		}else {
 			//the user is free to apply for a car (becuase he is not has been assigned to an already existing car)
+			user.setDepartureDate(existingCar.getDepartureDate());
 			user.setDepartureTime(existingCar.getDepartureTime());
 			user.setDepartureCity(existingCar.getDepartureCity());
 			user.setDepartureAddress(existingCar.getDepartureAddress());
 			
+			user.setDestinationDate(existingCar.getDestinationDate());
 			user.setDestinationTime(existingCar.getDestinationTime());
 			user.setDestinationCity(existingCar.getDestinationCity());
 			user.setDestinationAddress(existingCar.getDestinationAddress());
@@ -108,9 +113,6 @@ public class DriverService {
 		return carService.findCarById(carId);
 	}
 	
-	public Car getFreeCar() {
-		return carService.getFreeCar();
-	}
 	
 	public void saveUser(User user) {
 		userService.saveUser(user);

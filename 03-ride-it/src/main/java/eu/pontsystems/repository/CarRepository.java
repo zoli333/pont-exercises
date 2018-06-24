@@ -19,6 +19,6 @@ public interface CarRepository extends JpaRepository<Car, Integer>{
 	public Car findByCarId(Integer carId);
 	
 	@Query("select c from Car c where c.maxplaces=0")
-	public Car getFreeCar();
+	public List<Car> getFreeCar();
 	
 }

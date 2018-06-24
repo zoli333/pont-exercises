@@ -1,6 +1,7 @@
 package eu.pontsystems.entity;
 
-import java.sql.Timestamp;
+import java.sql.Date;
+import java.sql.Time;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -9,18 +10,10 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import org.hibernate.annotations.Fetch;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import javax.persistence.JoinColumn;
 @Entity
 @Table(name="user")
 public class User{
@@ -28,25 +21,27 @@ public class User{
 	public User() {}
 
 	
-	
-	
 	public User(Integer id, String username, String password, String firstname, String lastname, String email,
-			Timestamp departureTime, String departureCity, String departureAddress, Timestamp destinationTime,
-			String destinationCity, String destinationAddress, String role, Car car) {
+			Date departureDate, Time departureTime, String departureCity, String departureAddress, Date destinationDate,
+			Time destinationTime, String destinationCity, String destinationAddress, String role, Car car,
+			int maxplaces) {
 		this.id = id;
 		this.username = username;
 		this.password = password;
 		this.firstname = firstname;
 		this.lastname = lastname;
 		this.email = email;
+		this.departureDate = departureDate;
 		this.departureTime = departureTime;
 		this.departureCity = departureCity;
 		this.departureAddress = departureAddress;
+		this.destinationDate = destinationDate;
 		this.destinationTime = destinationTime;
 		this.destinationCity = destinationCity;
 		this.destinationAddress = destinationAddress;
 		this.role = role;
 		this.car = car;
+		this.maxplaces = maxplaces;
 	}
 
 
@@ -72,8 +67,11 @@ public class User{
 	@Column(name="email")
 	private String email;
 	
+	@Column(name="departure_date")
+	private Date departureDate;
+	
 	@Column(name="departure_time")
-	private Timestamp departureTime;
+	private Time departureTime;
 	
 	@Column(name="departure_city")
 	private String departureCity;
@@ -81,8 +79,11 @@ public class User{
 	@Column(name="departure_address")
 	private String departureAddress;
 	
+	@Column(name="destination_date")
+	private Date destinationDate;
+	
 	@Column(name="destination_time")
-	private Timestamp destinationTime;
+	private Time destinationTime;
 	
 	@Column(name="destination_city")
 	private String destinationCity;
@@ -164,13 +165,6 @@ public class User{
 		this.email = email;
 	}
 
-	public Timestamp getDepartureTime() {
-		return departureTime;
-	}
-
-	public void setDepartureTime(Timestamp departureTime) {
-		this.departureTime = departureTime;
-	}
 
 	public String getDepartureCity() {
 		return departureCity;
@@ -188,13 +182,6 @@ public class User{
 		this.departureAddress = departureAddress;
 	}
 
-	public Timestamp getDestinationTime() {
-		return destinationTime;
-	}
-
-	public void setDestinationTime(Timestamp destinationTime) {
-		this.destinationTime = destinationTime;
-	}
 
 	public String getDestinationCity() {
 		return destinationCity;
@@ -228,15 +215,57 @@ public class User{
 		this.car = car;
 	}
 
+
+	public Date getDepartureDate() {
+		return departureDate;
+	}
+
+
+	public void setDepartureDate(Date departureDate) {
+		this.departureDate = departureDate;
+	}
+
+
+	public Time getDepartureTime() {
+		return departureTime;
+	}
+
+
+	public void setDepartureTime(Time departureTime) {
+		this.departureTime = departureTime;
+	}
+
+
+	public Date getDestinationDate() {
+		return destinationDate;
+	}
+
+
+	public void setDestinationDate(Date destinationDate) {
+		this.destinationDate = destinationDate;
+	}
+
+
+	public Time getDestinationTime() {
+		return destinationTime;
+	}
+
+
+	public void setDestinationTime(Time destinationTime) {
+		this.destinationTime = destinationTime;
+	}
+
+
 	@Override
 	public String toString() {
 		return "User [id=" + id + ", username=" + username + ", password=" + password + ", firstname=" + firstname
-				+ ", lastname=" + lastname + ", email=" + email + ", departureTime=" + departureTime
-				+ ", departureCity=" + departureCity + ", departureAddress=" + departureAddress + ", destinationTime="
-				+ destinationTime + ", destinationCity=" + destinationCity + ", destinationAddress="
-				+ destinationAddress + ", role=" + role + ", car=" + car + "]";
+				+ ", lastname=" + lastname + ", email=" + email + ", departureDate=" + departureDate
+				+ ", departureTime=" + departureTime + ", departureCity=" + departureCity + ", departureAddress="
+				+ departureAddress + ", destinationDate=" + destinationDate + ", destinationTime=" + destinationTime
+				+ ", destinationCity=" + destinationCity + ", destinationAddress=" + destinationAddress + ", role="
+				+ role + ", car=" + car + ", maxplaces=" + maxplaces + "]";
 	}
-
+	
 	
 	
 }

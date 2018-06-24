@@ -17,7 +17,7 @@ public class CarService {
 		return carRepository.findAll(); 
 	}
 	
-	public Car getFreeCar() {
+	public List<Car> getFreeCar() {
 		return carRepository.getFreeCar();
 	}
 	

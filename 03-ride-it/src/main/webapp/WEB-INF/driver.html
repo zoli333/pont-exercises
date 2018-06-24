@@ -15,32 +15,39 @@
 	<!-- NEW CAR REGISTRATION -->
 	<div v-if="registerNewCarButton==true">
 		<button class="btn btn-primary btn-lg" style="width:250px;" v-on:click="registNewCarRegistrationForm = true">Register new car</button>
-		<span v-if="registNewCarRegistrationForm">
-			<form class="form-signin" v-on:submit.prevent>
-				<div><p>Please Enter the new car's registration data necessary</p></div>
+		<hr class="borderdiv">	
+		<form v-if="registNewCarRegistrationForm" class="form-signin" v-on:submit.prevent>
+			<div><p>Please Enter the new car's registration data necessary</p></div>
+			<div class="row col-md-6">
 				<div v-for="(value,key) in newCarRegData.data" class="form-group">
 					 <input type="text" class="form-control"  v-model="newCarRegData.data[key]" v-bind:placeholder="newCarRegData.placeholders[key]" required>
 				</div>
-				<button class="btn btn-primary btn-lg" style="width:250px;" v-on:click="postNewCarRegistration()" type="submit">Send</button>
-				<button class="btn btn-primary btn-lg" style="width:250px;" v-on:click="registNewCarRegistrationForm=false" >Cancel</button>				
-			</form>
-		</span>
-		<hr class="borderdiv">
-		
+			</div>
+			<div class="clearfix"></div>
+			<div class="row center-block">
+				<button class="btn btn-primary btn-lg" style="width:200px;" v-on:click="postNewCarRegistration()" type="submit">Send</button>
+				<button class="btn btn-primary btn-lg" style="width:200px;" v-on:click="registNewCarRegistrationForm=false" >Cancel</button>
+			</div>		
+		</form>
 	</div>
 	
 	
 	<!-- LIST OUT DRIVERS AND PASSENGERS -->
-	<div v-if="car.hasDriver || car.passengerList.length>0" class="row col-md-12" v-for="(car,index) in allcars" style="border: 1px solid black; margin-bottom: 25px; padding: 0;">
+	<div v-if="car.hasDriver || car.passengerList.length>0" class="row col-md-12" v-for="(car,index) in allcars" style="border: 1px solid black; margin-bottom: 25px; margin-top: 30px; padding:0;">
 		<table class="table table-bordered">
 			<!-- DRIVER -->
 			<thead>
+				<tr class="text-center">
+					<td colspan="12" v-if="car.hasDriver && car.driver.id==userId"><h3>My car</h3></td>
+				</tr>
 				<tr>
 					<th>Name</th>
 					<th>Email Address</th>
+					<th>Departure Date</th>
 					<th>Departure Time</th>
 					<th>Departure City</th>
 					<th>Departure Address</th>
+					<th>Destination Date</th>
 					<th>Destination Time</th>
 					<th>Destination City</th>
 					<th>Destination Address</th>
@@ -50,14 +57,16 @@
 			</thead>
 			<tbody>
 				<tr>
-					<td colspan="10" class="text-center" style="background-color: lightgrey;">Driver</td>
+					<td colspan="12" class="text-center" style="background-color: lightgrey;">Driver</td>
 				</tr>
 				<tr v-if="car.hasDriver">
 					<td>{{car.driver.firstname + " " + car.driver.lastname}}</td>
 					<td>{{car.driver.email}}</td>
+					<td>{{car.driver.departureDate}}</td>
 					<td>{{car.driver.departureTime}}</td>
 					<td>{{car.driver.departureCity}}</td>
 					<td>{{car.driver.departureAddress}}</td>
+					<td>{{car.driver.destinationDate}}</td>
 					<td>{{car.driver.destinationTime}}</td>
 					<td>{{car.driver.destinationCity}}</td>
 					<td>{{car.driver.destinationAddress}}</td>
@@ -69,25 +78,27 @@
 			<!-- PASSENGER(S) -->
 			<thead  class="text-center" >
 				<tr>
-					<td colspan="10"style="background-color: lightgrey">Passengers</td>
+					<td colspan="12"style="background-color: lightgrey">Passengers</td>
 				</tr>
 			</thead>
 			<tbody>
 				<tr v-if="car.passengerList.length>0 " v-for="(passenger,pindex) in car.passengerList">
 					<td>{{passenger.firstname + " " + passenger.lastname}}</td>
 					<td>{{passenger.email}}</td>
+					<td>{{passenger.departureDate}}</td>
 					<td>{{passenger.departureTime}}</td>
 					<td>{{passenger.departureCity}}</td>
 					<td>{{passenger.departureAddress}}</td>
+					<td>{{passenger.destinationDate}}</td>
 					<td>{{passenger.destinationTime}}</td>
-					<td>{{passenger.destiantionCity}}</td>
+					<td>{{passenger.destinationCity}}</td>
 					<td>{{passenger.destinationAddress}}</td>
 				</tr>
 				
 				
 				<!-- REMOVE IF I AM APPLIED FOR A CAR AS DRIVER-->
 				<tr v-if="car.hasDriver==true && car.driver.id == userId">
-					<td colspan="10">
+					<td colspan="12">
 						<div class="col-md-12 text-center"> 
 							<button class="btn btn-primary btn-lg" style="width:250px;" v-on:click="deleteDriver(car.driver.car.carId, userId)" type="submit">Remove</button>
 						</div>
@@ -97,37 +108,22 @@
 				
 				<!-- APPLY AS A DRIVER FOR CARS TO THOSE WHICH DOESNT HAVE DRIVERS -->
 				<tr v-else-if="car.hasDriver==false">
-					<td colspan="10">
+					<td colspan="12">
 						<div class="col-md-12 text-center"> 
 							<button class="btn btn-primary btn-lg" style="width:250px;" v-on:click="car.applyButton=true">Apply as driver</button>
 							<form v-if="car.applyButton==true" class="formclass" v-on:submit.prevent style="margin-top: 25px;">
-								<div class="form-group">
-									<input type="text" class="form-control"  v-model="car.inputdeparturetime" placeholder="Enter Departure Time (YYYY-MM-DD HH:MM:SS)" required>
+								<div class="row col-md-6">
+									<div v-for="(value,key) in car.newCarRegData.data" class="form-group">
+										 <input type="text" class="form-control"  v-model="car.newCarRegData.data[key]" v-bind:placeholder="car.newCarRegData.placeholders[key]" required>
+									</div>
 								</div>
-								<div class="form-group">
-									<input type="text" class="form-control" v-model="car.inputdeparturecity" placeholder="Enter Departure City" required>
-								</div>
-								<div class="form-group">
-									<input type="text" class="form-control" v-model="car.inputdepartureaddress" placeholder="Enter Departure Address" required>
-								</div>
-								<div class="form-group">
-									<input type="text" class="form-control"  v-model="car.inputdestinationtime" placeholder="Enter Destination Time (YYYY-MM-DD HH:MM:SS)" required>
-								</div>
+								<div class="clearfix"></div>
+								<div class="row center-box col-md-6">
+									<button class="btn btn-primary btn-lg" style="width:200px;" v-on:click="driverApply(car, userId)" type="submit">Send</button>
+									<button class="btn btn-primary btn-lg" style="width:200px;" v-on:click="car.applyButton=false">Cancel</button>
+								</div>		
 								
-								<div class="form-group">
-									<input type="text" class="form-control" v-model="car.inputdestinationcity" placeholder="Enter Destination City" required>
-								</div>
-								<div class="form-group">
-									<input type="text" class="form-control" v-model="car.inputdestinationaddress" placeholder="Enter Destination Address" required>
-								</div>
-								<div class="form-group">
-									<input type="text" class="form-control" v-model="car.inputmaxplaces" placeholder="Enter Max places" required>
-								</div>
-								<button class="btn btn-primary btn-lg" style="width:250px;" v-on:click="driverApply(car, userId)" type="submit">Send</button>
-								
-								<button class="btn btn-primary btn-lg" style="width:250px;" v-on:click="car.applyButton=false; errorMessage=''">Cancel</button>
 							</form>
-							<span v-if="errorMessage!=''">{{errorMessage}}</span>
 						</div>
 					</td>
 				</tr>
@@ -152,9 +148,6 @@
 			userId: '',
 			numberOfCars: '',
 			hasDriver: true,
-			index: '',
-			pindex: '',
-			errorMessage: '',
 			
 			//new car registration buttons
 			registerNewCarButton: false,
@@ -164,35 +157,30 @@
 			newCarRegData : 
 			{	
 				data: {
+						"departureDate": "",
 						"departureTime": "",
 						"departureCity": "",
 						"departureAddress": "",
+						"destinationDate": "",
 						"destinationTime": "",
 						"destinationCity": "",
 						"destinationAddress": "",
 						"maxplaces": ""
 				},
 				placeholders: {
-						"departureTime": 'Enter Departure Time (YYYY-MM-DD HH:MM:SS)',
+						"departureDate": "Enter Departure Date (YYYY-MM-DD)",
+						"departureTime": 'Enter Departure Time (HH:MM)',
 						"departureCity": 'Enter Departure City',
 						"departureAddress": 'Enter Departure Address',
-						"destinationTime": 'Enter Destination Time (YYYY-MM-DD HH:MM:SS)',
+						"destinationDate": "Enter Destination Date (YYYY-MM-DD)",
+						"destinationTime": 'Enter Destination Time (HH:MM)',
 						"destinationCity": 'Enter Destination City',
 						"destinationAddress": 'Enter Destination Address',
 						"maxplaces": 'Enter Max places'
 				}
-			},
+			}
 			
-			
-			//apply buttons registration data
-			inputdeparturetime: {},
-			inputdeparturecity: {},
-			inputdepartureaddress: {},
-			inputdestinationtime: {},
-			inputdestinationcity: {},
-			inputdestinationaddress: {},
-			inputmaxplaces: {}
-			
+						
 		},
 		methods: {
 			
@@ -207,7 +195,8 @@
   						self.userId = Object.keys(response.data)[0];
   						self.numberOfCars = Object.values(response.data)[0].length;
   						self.allcars = Object.values(response.data)[0];
-  						self.allcars = self.convertDepartureTimeAndDeparturePlaceToString(self.allcars);
+  						self.allcars = self.addDynamicVariablesToAllcarsObject(self.allcars);
+  						self.allcars = self.cutSecondsFromDepartureTimeAndDestinationTime(self.allcars);
   						self.allcars = self.getCarDriver(self.allcars);
   						self.registerNewCarButton=self.showRegistrationButton(self.allcars, self.userId);
   						self.allcars = self.makeMyCarFirst(self.allcars,self.userId);
@@ -221,7 +210,6 @@
 			//and the passengers have roles "PASSENGER"
 			getCarDriver: function(cars) {
 				for(var i=0;i<this.numberOfCars;i++) {
-					this.$set(cars[i],'applyButton',false);
 					var foundDriver = false;
 					var j=0;
 					if(cars[i].passengerList.length!=0) {
@@ -273,8 +261,8 @@
 			//the java backend will assigned his/her to this existing car, else create a new one for him/her
   			postNewCarRegistration: function() {
   				var self = this;
-  				self.newCarRegData.data.departureTime=moment(self.newCarRegData.data.departureTime,"YYYY-MM-DD HH:MM:SS");
-  				self.newCarRegData.data.destinationTime=moment(self.newCarRegData.data.destinationTime,"YYYY-MM-DD HH:MM:SS");
+  				self.newCarRegData.data.departureTime+=":00";
+  				self.newCarRegData.data.destinationTime+=":00";
   				axios.post('/rideit/cars',self.newCarRegData.data,
 							{ 'content-type': 'text/plain;charset=utf-8' }
 	  					)
@@ -282,6 +270,7 @@
 							self.flushNewCarRegData();
 							self.getAllCars();
 						});
+				
   				
   			},
   			deleteDriver: function(carId, userId) {
@@ -292,59 +281,49 @@
   						self.getAllCars();
   					});  				
   			},
-  			
   			/*TODO: autogenerate the forms in the table for application of drivers for a car, make this to pass an object instead of parameters */ 
-  			driverApply(car, userId) {
+  			driverApply: function(car, userId) {
   				var self = this;
   				var carId = car.carId;
-  				axios.put("/rideit/cars/"+carId+"/users/" + userId, {
-  							carId: carId,
-  							userId: userId,
-		  					departureTime: 	moment(car.inputdeparturetime,"YYYY-MM-DD HH:MM:SS"),
-		  					departureCity: car.inputdeparturecity,
-			  				departureAddress: car.inputdepartureaddress,
-			  				destinationTime: moment(car.inputdestinationtime,"YYYY-MM-DD HH:MM:SS"),
-			  				destinationCity: car.inputdestinationcity,
-			  				destinationAddress: car.inputdestinationaddress,
-			  				maxplaces: car.inputmaxplaces  							
-  						},
-  						{ 'content-type': 'text/plain;charset=utf-8' })
+  				var url = '/rideit/cars/'+carId +'/users/' + userId;
+  				car.newCarRegData.data.departureTime+=":00";
+  				car.newCarRegData.data.destinationTime+=":00";
+  				axios.put(url,car.newCarRegData.data,						
+						{ 'content-type': 'application/json;charset=utf-8' })
 						.then(function(response){
 							self.getAllCars();
 						});	
   				
   			},
   			flushNewCarRegData: function() {
-  				for(var i in this.newCarRegData.data) {
-  					this.newCarRegData.data[i] = "";
+  				for(var key in this.newCarRegData.data) {
+  					this.newCarRegData.data[key] = "";
   				}
   			},
-  			//this function converts the timestamp format sent from java side 
-			//as json string format
-			convertDepartureTimeAndDeparturePlaceToString: function(cars) {
+  			cutSecondsFromDepartureTimeAndDestinationTime: function(cars) {
 				for(var i=0;i<cars.length;i++) {
 					if(cars[i].passengerList!=undefined){
 						for(var j=0;j<cars[i].passengerList.length;j++) {
-							var d, dateTime, date, time;
+							var time;
 							if(cars[i].passengerList[j].departureTime!=undefined){
-								d = new Date(cars[i].passengerList[j].departureTime);
-								dateTime = d.toLocaleString("hu").split(".");
-								date = dateTime[0].trim()+"-"+dateTime[1].trim()+"-"+dateTime[2].trim();
-								time = dateTime[3].trim();
-								cars[i].passengerList[j].departureTime = date + " " + time;
+								time = cars[i].passengerList[j].departureTime.split(":");
+								cars[i].passengerList[j].departureTime = time[0] + ":" + time[1];
 							}
 							if(cars[i].passengerList[j].destinationTime!=undefined){
-								d = new Date(cars[i].passengerList[j].destinationTime);
-								dateTime = d.toLocaleString("hu").split(".");
-								date = dateTime[0].trim()+"-"+dateTime[1].trim()+"-"+dateTime[2].trim();
-								time = dateTime[3].trim();
-								cars[i].passengerList[j].destinationTime = date + " " + time;
+								time = cars[i].passengerList[j].destinationTime.split(":");
+								cars[i].passengerList[j].destinationTime = time[0] + ":" + time[1];
 							}
-								
 						}
 	
 					}
 										
+				}
+				return cars;
+			},
+			addDynamicVariablesToAllcarsObject: function(cars) {
+				for(var i=0;i<this.numberOfCars;i++) {
+					this.$set(cars[i],'applyButton',false);
+					this.$set(cars[i],'newCarRegData',this.newCarRegData);
 				}
 				return cars;
 			}
