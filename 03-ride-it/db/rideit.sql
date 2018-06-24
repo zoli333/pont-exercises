@@ -1,8 +1,8 @@
--- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 5.7.22, for Linux (x86_64)
 --
--- Host: 127.0.0.1    Database: rideit
+-- Host: localhost    Database: rideit
 -- ------------------------------------------------------
--- Server version	5.7.19
+-- Server version	5.7.22-0ubuntu0.16.04.1
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -52,10 +52,12 @@ CREATE TABLE `user` (
   `firstname` varchar(45) DEFAULT NULL,
   `lastname` varchar(45) DEFAULT NULL,
   `email` varchar(45) DEFAULT NULL,
-  `departure_time` datetime DEFAULT NULL,
+  `departure_date` date DEFAULT NULL,
+  `departure_time` time DEFAULT NULL,
   `departure_city` varchar(45) DEFAULT NULL,
   `departure_address` varchar(45) DEFAULT NULL,
-  `destination_time` datetime DEFAULT NULL,
+  `destination_date` date DEFAULT NULL,
+  `destination_time` time DEFAULT NULL,
   `destination_city` varchar(45) DEFAULT NULL,
   `destination_address` varchar(45) DEFAULT NULL,
   `role` varchar(45) NOT NULL,
@@ -84,4 +86,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-06-18 14:26:34
+-- Dump completed on 2018-06-24 21:17:21
