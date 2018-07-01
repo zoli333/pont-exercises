@@ -22,13 +22,17 @@ Completed:
   - ~Separate the city, from the specific adress, make different columns for them (make them searchable)~
   - ~make the buttons dynamic, dont show the 2 apply or remove buttons, just for those tables where it is relevant.~
   - ~form automatization / generation for "Register new car button"~
+  - ~automatic form generation for forms corresponding to "Apply" button on driver.html.~
+  - ~make a search form, and button where the passenger can search for cars.~
+  - ~make the add, remove buttons' behaviour dynamic, by not refreshing the page and listing all the cars all the time when a button is clicked, figure out a new way to do this,without having to refresh the page, and querying allcars object all the time (100% done, on driver page "Register new car" and "deleteDriver" button)~
+
 
 Todos:
-  - make a search form, and button where the passenger can search for cars. Then list out the found cars, and make apply button
-  - auto generation for forms in the tables generated for drivers also.
+  - passenger.html page
+  - List out the found cars, and make apply button
   - make the page listable - this means if the user dont want to search for specific destination, it can scroll between them.
   - limit the page to not to list more than 5 cars, for example.
-  - make the add, remove buttons' behaviour dynamic, by not refreshing the page and listing all the cars all the time when a button is clicked, figure out a new way to do this,without having to refresh the page, and querying allcars object all the time (70% done, on driver page "Register new car" and "deleteDriver" button)
+
 More Todos:
   - later should be given intermediate city destinations
   
